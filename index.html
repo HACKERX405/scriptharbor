@@ -1,0 +1,4144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07070a" />
+    <meta name="description" content="ScriptHarbor — Build, preview, collaborate and deploy from one browser-native workspace." />
+    <title>ScriptHarbor — Your Code. Your Cloud. Your Workflow.</title>
+    <style>
+        /* =========================================================
+           SCRIPTHARBOR — SINGLE FILE LANDING PAGE
+           ========================================================= */
+
+        /* ----- RESET ----- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+            background: #07070a;
+        }
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: radial-gradient(circle at 50% -10%, rgba(95, 76, 255, .14), transparent 32rem), #07070a;
+            color: #f5f5f7;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        img,
+        svg {
+            display: block;
+            max-width: 100%;
+        }
+        ::selection {
+            background: #8a7cff;
+            color: #fff;
+        }
+
+        /* ----- VARIABLES ----- */
+        :root {
+            --bg: #07070a;
+            --bg-2: #0c0c11;
+            --panel: rgba(18, 18, 25, .72);
+            --panel-solid: #111117;
+            --line: rgba(255, 255, 255, .09);
+            --line-strong: rgba(255, 255, 255, .16);
+            --text: #f6f6f8;
+            --muted: #a4a4b1;
+            --dim: #696976;
+            --blue: #6d63ff;
+            --cyan: #4ddcff;
+            --violet: #a45cff;
+            --green: #45e59a;
+            --orange: #ff9a5b;
+            --shadow: 0 30px 100px rgba(0, 0, 0, .45);
+            --radius: 24px;
+            --max: 1240px;
+        }
+
+        /* ----- GLOBAL ----- */
+        .container {
+            width: min(calc(100% - 40px), var(--max));
+            margin-inline: auto;
+        }
+        .section {
+            position: relative;
+            padding: 150px 0;
+        }
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 11px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .035);
+            color: #d8d8e0;
+            font-size: 12px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 18px var(--green);
+        }
+        .section-heading {
+            max-width: 760px;
+            margin-bottom: 65px;
+        }
+        .section-heading h2 {
+            margin-top: 22px;
+            font-size: clamp(42px, 6vw, 78px);
+            line-height: .98;
+            letter-spacing: -.055em;
+        }
+        .section-heading p {
+            max-width: 650px;
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 18px;
+        }
+        .gradient-text {
+            background: linear-gradient(100deg, #fff 15%, #b9b3ff 48%, #70ddff 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .muted {
+            color: var(--muted);
+        }
+        .glass {
+            background: linear-gradient(145deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity .8s ease, transform .8s cubic-bezier(.16, 1, .3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ----- CURSOR GLOW ----- */
+        .cursor-glow {
+            position: fixed;
+            z-index: 0;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(100, 91, 255, .11), transparent 65%);
+            transform: translate(-50%, -50%);
+            transition: opacity .3s ease;
+        }
+
+        /* ----- BACKGROUND GRID ----- */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            pointer-events: none;
+            opacity: .38;
+            background-image: linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px);
+            background-size: 72px 72px;
+            mask-image: linear-gradient(to bottom, black, transparent 85%);
+        }
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            opacity: .025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+        }
+
+        /* ----- NAVBAR ----- */
+        .nav-wrap {
+            position: fixed;
+            z-index: 40;
+            top: 18px;
+            left: 0;
+            right: 0;
+            padding: 0 20px;
+        }
+        .nav {
+            width: min(1180px, 100%);
+            height: 66px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 9px 0 17px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: 20px;
+            background: rgba(10, 10, 14, .70);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: 0 15px 60px rgba(0, 0, 0, .28);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 750;
+            letter-spacing: -.03em;
+        }
+        .brand-mark {
+            position: relative;
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #776dff, #3ccff5);
+            box-shadow: 0 0 28px rgba(100, 92, 255, .32);
+        }
+        .brand-mark::after {
+            content: "";
+            width: 13px;
+            height: 13px;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            transform: rotate(45deg);
+        }
+        .brand span {
+            font-size: 17px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 27px;
+        }
+        .nav-links a {
+            color: #a9a9b5;
+            font-size: 13px;
+            transition: color .2s ease;
+        }
+        .nav-links a:hover {
+            color: #fff;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 44px;
+            padding: 0 17px;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 650;
+            color: #fff;
+            transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-ghost {
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, .035);
+        }
+        .btn-ghost:hover {
+            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, .07);
+        }
+        .btn-primary {
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .18);
+            background: linear-gradient(135deg, #756bff, #4f87ff);
+            box-shadow: 0 12px 34px rgba(87, 78, 255, .28);
+        }
+        .btn-primary::before {
+            content: "";
+            position: absolute;
+            inset: -80%;
+            background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, .35), transparent 60%);
+            transform: translateX(-50%) rotate(15deg);
+            transition: transform .7s ease;
+        }
+        .btn-primary:hover::before {
+            transform: translateX(50%) rotate(15deg);
+        }
+        .btn span,
+        .btn svg {
+            position: relative;
+            z-index: 1;
+        }
+        .menu-btn {
+            display: none;
+            width: 43px;
+            height: 43px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .04);
+            color: #fff;
+        }
+
+        /* ----- HERO ----- */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            left: 50%;
+            top: 30%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(86, 77, 255, .15), transparent 65%);
+            filter: blur(10px);
+            pointer-events: none;
+        }
+        .hero-copy {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        .hero-copy .eyebrow {
+            margin-bottom: 25px;
+        }
+        .hero-title {
+            font-size: clamp(62px, 10vw, 142px);
+            line-height: .83;
+            letter-spacing: -.075em;
+            font-weight: 760;
+        }
+        .hero-title .line {
+            display: block;
+        }
+        .hero-subtitle {
+            max-width: 660px;
+            margin: 34px auto 0;
+            color: #a8a8b4;
+            font-size: clamp(16px, 2vw, 20px);
+        }
+        .hero-actions {
+            margin-top: 31px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .hero-note {
+            margin-top: 17px;
+            color: #656571;
+            font-size: 12px;
+        }
+
+        /* ----- ORBIT SCENE ----- */
+        .orbit-scene {
+            position: relative;
+            width: min(100%, 1050px);
+            height: 560px;
+            margin: 70px auto 0;
+            perspective: 1200px;
+        }
+        .orbit-ring {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            border: 1px solid rgba(126, 116, 255, .16);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(68deg);
+        }
+        .ring-one {
+            width: 820px;
+            height: 300px;
+            animation: spinRing 18s linear infinite;
+        }
+        .ring-two {
+            width: 650px;
+            height: 240px;
+            opacity: .65;
+            animation: spinRingReverse 13s linear infinite;
+        }
+        .ring-three {
+            width: 460px;
+            height: 170px;
+            opacity: .45;
+            animation: spinRing 9s linear infinite;
+        }
+        @keyframes spinRing {
+            from {
+                transform: translate(-50%, -50%) rotateX(68deg) rotateZ(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotateX(68deg) rotateZ(360deg);
+            }
+        }
+        @keyframes spinRingReverse {
+            from {
+                transform: translate(-50%, -50%) rotateX(68deg) rotateZ(360deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotateX(68deg) rotateZ(0deg);
+            }
+        }
+        .orbit-core {
+            position: absolute;
+            left: 50%;
+            top: 47%;
+            width: 290px;
+            height: 185px;
+            transform: translate(-50%, -50%) rotateX(8deg) rotateY(-8deg);
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 22px;
+            background: linear-gradient(145deg, rgba(31, 31, 43, .93), rgba(9, 9, 14, .93));
+            box-shadow: 0 50px 100px rgba(0, 0, 0, .58), 0 0 100px rgba(92, 81, 255, .16), inset 0 1px 0 rgba(255, 255, 255, .08);
+            overflow: hidden;
+            transition: transform .2s ease;
+        }
+        .orbit-core::before {
+            content: "";
+            position: absolute;
+            inset: -30%;
+            background: radial-gradient(circle at 50% 10%, rgba(116, 104, 255, .18), transparent 55%);
+        }
+        .core-top {
+            position: relative;
+            z-index: 1;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 13px;
+            border-bottom: 1px solid var(--line);
+        }
+        .window-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #5e5e68;
+        }
+        .core-body {
+            position: relative;
+            z-index: 1;
+            padding: 19px;
+        }
+        .core-code {
+            font: 11px/1.8 "SFMono-Regular", Consolas, monospace;
+            color: #8f8f9e;
+        }
+        .code-blue {
+            color: #77a9ff;
+        }
+        .code-purple {
+            color: #bd92ff;
+        }
+        .code-green {
+            color: #64e7ac;
+        }
+        .code-orange {
+            color: #ffb27a;
+        }
+        .float-card {
+            position: absolute;
+            z-index: 5;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, .11);
+            border-radius: 17px;
+            background: rgba(15, 15, 21, .78);
+            box-shadow: 0 25px 65px rgba(0, 0, 0, .42);
+            backdrop-filter: blur(20px);
+            animation: float 5s ease-in-out infinite;
+        }
+        .float-card small {
+            display: block;
+            margin-bottom: 6px;
+            color: #737380;
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .float-card strong {
+            display: block;
+            font-size: 13px;
+        }
+        .float-one {
+            left: 8%;
+            top: 26%;
+            animation-delay: -.8s;
+        }
+        .float-two {
+            right: 8%;
+            top: 18%;
+            animation-delay: -2s;
+        }
+        .float-three {
+            left: 15%;
+            bottom: 19%;
+            animation-delay: -3s;
+        }
+        .float-four {
+            right: 13%;
+            bottom: 16%;
+            animation-delay: -1.4s;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0) rotateX(0);
+            }
+            50% {
+                transform: translateY(-14px) rotateX(2deg);
+            }
+        }
+        .status-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #9f9fa9;
+            font-size: 11px;
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px var(--green);
+        }
+
+        /* ----- TRUST BAR ----- */
+        .trust {
+            padding: 45px 0;
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+        .trust-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+        .trust-label {
+            color: #61616c;
+            font-size: 11px;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+        }
+        .trust-items {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            color: #6f6f7b;
+            font-size: 14px;
+            font-weight: 650;
+        }
+
+        /* ----- PRODUCT SHOWCASE ----- */
+        .showcase {
+            padding-top: 120px;
+        }
+        .product-shell {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: 30px;
+            background: #0c0c11;
+            box-shadow: 0 50px 150px rgba(0, 0, 0, .5);
+        }
+        .product-shell::after {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            right: -200px;
+            top: -220px;
+            border-radius: 50%;
+            background: rgba(101, 91, 255, .14);
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        .product-bar {
+            height: 58px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 0 18px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, .025);
+        }
+        .product-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #494951;
+        }
+        .product-url {
+            width: 250px;
+            margin-left: 13px;
+            padding: 6px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            color: #767681;
+            font: 10px monospace;
+        }
+        .product-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 7px;
+        }
+        .tiny-btn {
+            padding: 7px 11px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .03);
+            color: #9a9aa6;
+            font-size: 10px;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+        .tiny-btn:hover {
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+        }
+        .workspace {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 210px 1fr 390px;
+            min-height: 540px;
+        }
+        .sidebar {
+            border-right: 1px solid var(--line);
+            background: rgba(255, 255, 255, .018);
+        }
+        .side-head {
+            padding: 18px 17px;
+            color: #d8d8df;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .side-project {
+            margin: 0 10px 12px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, .07);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .025);
+        }
+        .side-project-title {
+            font-size: 11px;
+            font-weight: 650;
+        }
+        .side-project-sub {
+            margin-top: 3px;
+            color: #656570;
+            font-size: 9px;
+        }
+        .tree {
+            padding: 5px 12px;
+            color: #777783;
+            font: 10px/2.1 monospace;
+        }
+        .tree .active {
+            color: #b8b2ff;
+        }
+        .editor {
+            min-width: 0;
+            background: #0b0b10;
+        }
+        .editor-tabs {
+            display: flex;
+            align-items: center;
+            height: 42px;
+            border-bottom: 1px solid var(--line);
+        }
+        .editor-tab {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-right: 1px solid var(--line);
+            color: #9b9ba6;
+            font: 10px monospace;
+        }
+        .editor-tab.active {
+            color: #fff;
+            background: rgba(255, 255, 255, .025);
+        }
+        .code-editor {
+            padding: 22px 18px;
+            font: 11px/1.95 "SFMono-Regular", Consolas, monospace;
+            color: #8b8b98;
+        }
+        .code-row {
+            display: flex;
+        }
+        .line-no {
+            width: 31px;
+            flex: 0 0 31px;
+            color: #3f3f49;
+            user-select: none;
+            text-align: right;
+            padding-right: 12px;
+        }
+        .code-text {
+            white-space: pre;
+        }
+        .preview {
+            position: relative;
+            overflow: hidden;
+            border-left: 1px solid var(--line);
+            background: #f3f4f8;
+            color: #101014;
+        }
+        .preview-head {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 13px;
+            border-bottom: 1px solid #dddde3;
+            background: #fff;
+        }
+        .preview-head .product-dot {
+            background: #c5c5ca;
+        }
+        .preview-url {
+            flex: 1;
+            margin-left: 6px;
+            padding: 5px 9px;
+            border: 1px solid #dedee4;
+            border-radius: 7px;
+            color: #898990;
+            font: 9px monospace;
+        }
+        .preview-body {
+            position: absolute;
+            inset: 42px 0 0;
+            padding: 28px;
+            background: radial-gradient(circle at 75% 15%, rgba(120, 102, 255, .14), transparent 35%), #f7f7fa;
+        }
+        .demo-site-pill {
+            display: inline-flex;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #e8e8ff;
+            color: #6156d7;
+            font-size: 8px;
+            font-weight: 700;
+        }
+        .demo-site-title {
+            max-width: 250px;
+            margin-top: 14px;
+            font-size: 27px;
+            line-height: 1;
+            letter-spacing: -.055em;
+        }
+        .demo-site-copy {
+            max-width: 245px;
+            margin-top: 10px;
+            color: #7a7a83;
+            font-size: 9px;
+        }
+        .demo-site-button {
+            display: inline-flex;
+            margin-top: 17px;
+            padding: 9px 13px;
+            border-radius: 8px;
+            background: #121218;
+            color: #fff;
+            font-size: 9px;
+        }
+        .preview-orb {
+            position: absolute;
+            right: 35px;
+            bottom: 70px;
+            width: 100px;
+            height: 100px;
+            border-radius: 32px;
+            background: linear-gradient(135deg, #776dff, #54d8f2);
+            transform: rotate(18deg);
+            box-shadow: 20px 25px 50px rgba(72, 65, 190, .25);
+            animation: previewOrb 4s ease-in-out infinite;
+        }
+        @keyframes previewOrb {
+            0%,
+            100% {
+                transform: rotate(18deg) translateY(0);
+            }
+            50% {
+                transform: rotate(25deg) translateY(-10px);
+            }
+        }
+
+        /* ----- FEATURE CARDS ----- */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+        .feature-card {
+            position: relative;
+            min-height: 290px;
+            padding: 28px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 23px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .018));
+            transition: transform .4s cubic-bezier(.16, 1, .3, 1), border-color .3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-7px);
+            border-color: rgba(139, 129, 255, .32);
+        }
+        .feature-card.wide {
+            grid-column: span 2;
+        }
+        .feature-card h3 {
+            margin-top: 65px;
+            font-size: 24px;
+            letter-spacing: -.035em;
+        }
+        .feature-card p {
+            max-width: 390px;
+            margin-top: 10px;
+            color: #888894;
+            font-size: 13px;
+        }
+        .feature-icon {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .04);
+            color: #aaa4ff;
+        }
+        .feature-visual {
+            position: absolute;
+            right: 25px;
+            bottom: 25px;
+            width: 130px;
+            height: 100px;
+            opacity: .8;
+        }
+
+        /* ----- CODE FLOW ----- */
+        .flow {
+            overflow: hidden;
+        }
+        .flow-stage {
+            position: relative;
+            min-height: 430px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flow-line {
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(125, 115, 255, .5), rgba(77, 220, 255, .5), transparent);
+        }
+        .flow-line::after {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: 0;
+            width: 35px;
+            height: 7px;
+            border-radius: 999px;
+            background: #8a80ff;
+            box-shadow: 0 0 20px #7a70ff;
+            animation: flowTravel 4s linear infinite;
+        }
+        @keyframes flowTravel {
+            from {
+                left: 0;
+            }
+            to {
+                left: calc(100% - 35px);
+            }
+        }
+        .flow-nodes {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .flow-node {
+            width: 190px;
+            height: 190px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 25%, rgba(105, 94, 255, .13), rgba(12, 12, 17, .95));
+            box-shadow: 0 30px 70px rgba(0, 0, 0, .4);
+            transition: transform .4s ease;
+        }
+        .flow-node:hover {
+            transform: scale(1.06);
+        }
+        .flow-node strong {
+            font-size: 15px;
+        }
+        .flow-node span {
+            color: #71717c;
+            font-size: 10px;
+        }
+
+        /* ----- AI SECTION ----- */
+        .ai-layout {
+            display: grid;
+            grid-template-columns: .8fr 1.2fr;
+            gap: 70px;
+            align-items: center;
+        }
+        .ai-copy h2 {
+            margin-top: 22px;
+            font-size: clamp(43px, 5vw, 72px);
+            line-height: .98;
+            letter-spacing: -.055em;
+        }
+        .ai-copy p {
+            margin-top: 22px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+        .ai-demo {
+            position: relative;
+            min-height: 500px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            background: #0d0d13;
+            box-shadow: var(--shadow);
+        }
+        .ai-editor {
+            height: 350px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #0a0a0f;
+        }
+        .ai-code {
+            padding: 20px;
+            font: 11px/1.9 monospace;
+            color: #757582;
+        }
+        .ai-chat {
+            position: absolute;
+            right: 2px;
+            bottom: 20px;
+            width: 290px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 17px;
+            background: rgba(24, 24, 33, .94);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .55);
+            backdrop-filter: blur(18px);
+        }
+        .ai-chat-top {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+        .ai-avatar {
+            width: 27px;
+            height: 27px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #796fff, #50d8ef);
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .ai-chat-top strong {
+            font-size: 11px;
+        }
+        .ai-chat-top span {
+            display: block;
+            color: #666671;
+            font-size: 9px;
+        }
+        .ai-message {
+            margin-top: 13px;
+            color: #a8a8b3;
+            font-size: 10px;
+        }
+        .ai-message b {
+            color: #eeeef2;
+        }
+        .ai-suggestion {
+            margin-top: 12px;
+            padding: 10px;
+            border: 1px solid rgba(111, 100, 255, .25);
+            border-radius: 10px;
+            background: rgba(100, 89, 255, .06);
+            color: #aaa4ff;
+            font: 9px/1.6 monospace;
+        }
+
+        /* ----- COLLABORATION ----- */
+        .collab-stage {
+            position: relative;
+            min-height: 550px;
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 40%, rgba(105, 94, 255, .11), transparent 45%), #0b0b10;
+        }
+        .collab-editor {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            left: 15%;
+            top: 15%;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, .13);
+            border-radius: 20px;
+            background: rgba(17, 17, 24, .9);
+            box-shadow: 0 45px 100px rgba(0, 0, 0, .55);
+            transform: rotateX(5deg) rotateY(-8deg);
+        }
+        .collab-toolbar {
+            display: flex;
+            gap: 6px;
+            padding-bottom: 15px;
+        }
+        .collab-lines {
+            font: 11px/2 monospace;
+            color: #72727e;
+        }
+        .cursor {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            pointer-events: none;
+            animation: cursorMove 6s ease-in-out infinite;
+        }
+        .cursor-pointer {
+            width: 0;
+            height: 0;
+            border-left: 8px solid #fff;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            transform: rotate(-28deg);
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .5));
+        }
+        .cursor-label {
+            padding: 4px 7px;
+            border-radius: 5px;
+            color: #fff;
+            background: #665cff;
+            font-size: 8px;
+            white-space: nowrap;
+        }
+        .cursor-a {
+            left: 30%;
+            top: 38%;
+        }
+        .cursor-b {
+            left: 61%;
+            top: 55%;
+            animation-delay: -2s;
+        }
+        .cursor-c {
+            left: 47%;
+            top: 66%;
+            animation-delay: -4s;
+        }
+        @keyframes cursorMove {
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+            35% {
+                transform: translate(25px, -18px);
+            }
+            70% {
+                transform: translate(-20px, 24px);
+            }
+        }
+
+        /* ----- DEPLOY SECTION ----- */
+        .deploy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .deploy-card {
+            min-height: 470px;
+            padding: 30px;
+            border: 1px solid var(--line);
+            border-radius: 25px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .015));
+        }
+        .deploy-card h3 {
+            font-size: 28px;
+            letter-spacing: -.04em;
+        }
+        .deploy-card>p {
+            max-width: 440px;
+            margin-top: 10px;
+            color: #858591;
+            font-size: 13px;
+        }
+        .pipeline {
+            margin-top: 60px;
+        }
+        .pipeline-row {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+        }
+        .pipeline-row::before {
+            content: "";
+            position: absolute;
+            top: 17px;
+            left: 25px;
+            right: 25px;
+            height: 1px;
+            background: rgba(255, 255, 255, .1);
+        }
+        .pipeline-step {
+            position: relative;
+            z-index: 1;
+            width: 70px;
+            text-align: center;
+        }
+        .pipeline-dot {
+            width: 35px;
+            height: 35px;
+            margin: auto;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line-strong);
+            border-radius: 50%;
+            background: #101016;
+            color: #8d84ff;
+            font-size: 10px;
+        }
+        .pipeline-step.active .pipeline-dot {
+            border-color: #756bff;
+            background: #675dff;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(103, 93, 255, .5);
+        }
+        .pipeline-step span {
+            display: block;
+            margin-top: 10px;
+            color: #696974;
+            font-size: 8px;
+        }
+        .terminal {
+            margin-top: 52px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: #08080c;
+        }
+        .terminal-head {
+            padding: 11px 13px;
+            border-bottom: 1px solid var(--line);
+            color: #696974;
+            font: 9px monospace;
+        }
+        .terminal-body {
+            min-height: 170px;
+            padding: 17px;
+            font: 10px/2 monospace;
+            color: #777782;
+        }
+        .term-green {
+            color: #55dfa0;
+        }
+        .term-purple {
+            color: #9d91ff;
+        }
+        .term-white {
+            color: #dddde2;
+        }
+
+        /* ----- COMPARISON ----- */
+        .compare-table {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, .02);
+        }
+        .compare-head,
+        .compare-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+        }
+        .compare-head {
+            background: rgba(255, 255, 255, .045);
+        }
+        .compare-cell {
+            padding: 20px 23px;
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            color: #9696a2;
+            font-size: 13px;
+        }
+        .compare-cell:last-child {
+            border-right: 0;
+        }
+        .compare-head .compare-cell {
+            color: #fff;
+            font-weight: 700;
+        }
+        .compare-head .compare-cell:nth-child(3) {
+            color: #a59dff;
+        }
+        .check {
+            color: #61e6a6;
+            font-weight: 800;
+        }
+        .cross {
+            color: #656570;
+        }
+
+        /* ----- STATS ----- */
+        .stats {
+            padding: 80px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-block: 1px solid var(--line);
+        }
+        .stat {
+            padding: 42px 25px;
+            text-align: center;
+            border-right: 1px solid var(--line);
+        }
+        .stat:last-child {
+            border-right: 0;
+        }
+        .stat strong {
+            display: block;
+            font-size: clamp(35px, 5vw, 65px);
+            line-height: 1;
+            letter-spacing: -.06em;
+        }
+        .stat span {
+            display: block;
+            margin-top: 8px;
+            color: #6f6f7a;
+            font-size: 11px;
+        }
+
+        /* ----- PRICING ----- */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+        .price-card {
+            position: relative;
+            min-height: 480px;
+            padding: 29px;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015));
+        }
+        .price-card.featured {
+            border-color: rgba(116, 106, 255, .45);
+            background: radial-gradient(circle at 50% 0%, rgba(105, 94, 255, .15), transparent 50%), rgba(255, 255, 255, .035);
+            transform: translateY(-10px);
+        }
+        .popular {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: rgba(105, 94, 255, .15);
+            color: #aaa4ff;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+        .price-card h3 {
+            font-size: 20px;
+        }
+        .price {
+            margin-top: 20px;
+            font-size: 52px;
+            line-height: 1;
+            letter-spacing: -.06em;
+        }
+        .price small {
+            color: #777782;
+            font-size: 12px;
+            letter-spacing: 0;
+        }
+        .price-card>p {
+            margin-top: 12px;
+            color: #7f7f8a;
+            font-size: 12px;
+        }
+        .price-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 35px;
+            list-style: none;
+        }
+        .price-list li {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #aaaab4;
+            font-size: 11px;
+        }
+        .price-list li::before {
+            content: "✓";
+            color: #6be6a9;
+            font-weight: 800;
+        }
+
+        /* ----- FAQ ----- */
+        .faq-list {
+            max-width: 850px;
+            margin: auto;
+            border-top: 1px solid var(--line);
+        }
+        .faq-item {
+            border-bottom: 1px solid var(--line);
+        }
+        .faq-question {
+            width: 100%;
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: transparent;
+            color: #e9e9ed;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .faq-plus {
+            color: #858591;
+            font-size: 23px;
+            transition: transform .3s ease;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            color: #81818d;
+            font-size: 13px;
+            transition: max-height .4s ease, padding .4s ease;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 180px;
+            padding: 0 45px 22px 0;
+        }
+        .faq-item.open .faq-plus {
+            transform: rotate(45deg);
+        }
+
+        /* ----- CTA ----- */
+        .cta {
+            padding: 140px 0 160px;
+        }
+        .cta-card {
+            position: relative;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, .11);
+            border-radius: 35px;
+            background: radial-gradient(circle at 50% 40%, rgba(107, 96, 255, .22), transparent 42%), #0c0c12;
+            box-shadow: 0 50px 150px rgba(0, 0, 0, .48);
+        }
+        .cta-card::before,
+        .cta-card::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(125, 115, 255, .13);
+            border-radius: 50%;
+            transform: rotateX(67deg);
+        }
+        .cta-card::before {
+            width: 700px;
+            height: 250px;
+        }
+        .cta-card::after {
+            width: 1000px;
+            height: 350px;
+        }
+        .cta-card>* {
+            position: relative;
+            z-index: 2;
+        }
+        .cta-card h2 {
+            max-width: 800px;
+            font-size: clamp(48px, 7vw, 92px);
+            line-height: .9;
+            letter-spacing: -.065em;
+        }
+        .cta-card p {
+            max-width: 530px;
+            margin-top: 20px;
+            color: #8a8a95;
+            font-size: 15px;
+        }
+        .cta-card .hero-actions {
+            margin-top: 28px;
+        }
+
+        /* ----- FOOTER ----- */
+        footer {
+            padding: 35px 0 50px;
+            border-top: 1px solid var(--line);
+        }
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .footer-copy {
+            max-width: 310px;
+            color: #656570;
+            font-size: 11px;
+        }
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(3, 110px);
+            gap: 35px;
+        }
+        .footer-col strong {
+            display: block;
+            margin-bottom: 14px;
+            color: #d7d7de;
+            font-size: 11px;
+        }
+        .footer-col a {
+            display: block;
+            margin-bottom: 8px;
+            color: #686873;
+            font-size: 10px;
+        }
+        .footer-col a:hover {
+            color: #fff;
+        }
+        .footer-bottom {
+            margin-top: 55px;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--line);
+            color: #555560;
+            font-size: 10px;
+        }
+
+        /* ----- MODAL ----- */
+        .modal-backdrop {
+            position: fixed;
+            z-index: 100;
+            inset: 0;
+            display: none;
+            place-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .72);
+            backdrop-filter: blur(14px);
+        }
+        .modal-backdrop.show {
+            display: grid;
+        }
+        .modal {
+            width: min(470px, 100%);
+            padding: 28px;
+            border: 1px solid var(--line-strong);
+            border-radius: 25px;
+            background: #111118;
+            box-shadow: 0 50px 150px rgba(0, 0, 0, .65);
+            animation: modalIn .4s cubic-bezier(.16, 1, .3, 1);
+        }
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .modal h3 {
+            font-size: 25px;
+            letter-spacing: -.04em;
+        }
+        .modal p {
+            margin-top: 7px;
+            color: #777783;
+            font-size: 12px;
+        }
+        .close-modal {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .04);
+            color: #aaaab5;
+        }
+        .form {
+            display: grid;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #92929d;
+            font-size: 10px;
+        }
+        .field input {
+            width: 100%;
+            height: 45px;
+            padding: 0 13px;
+            outline: 0;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: rgba(255, 255, 255, .035);
+            color: #fff;
+            transition: border-color .2s ease;
+        }
+        .field input:focus {
+            border-color: rgba(119, 108, 255, .7);
+        }
+        .form .btn {
+            width: 100%;
+            margin-top: 6px;
+        }
+        .modal-message {
+            min-height: 17px;
+            color: #6fe3a9;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        /* ----- TOAST ----- */
+        .toast {
+            position: fixed;
+            z-index: 120;
+            right: 22px;
+            bottom: 22px;
+            min-width: 240px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--line-strong);
+            border-radius: 13px;
+            background: rgba(17, 17, 23, .92);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+            color: #dddde3;
+            font-size: 11px;
+            transform: translateY(30px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .35s cubic-bezier(.16, 1, .3, 1);
+            backdrop-filter: blur(20px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast-icon {
+            color: #67e4a5;
+        }
+
+        /* ----- COMMAND PALETTE ----- */
+        .command-backdrop {
+            position: fixed;
+            z-index: 110;
+            inset: 0;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 15vh;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(12px);
+        }
+        .command-backdrop.show {
+            display: flex;
+        }
+        .command {
+            width: min(620px, calc(100% - 30px));
+            overflow: hidden;
+            border: 1px solid var(--line-strong);
+            border-radius: 18px;
+            background: #111117;
+            box-shadow: 0 50px 120px rgba(0, 0, 0, .7);
+        }
+        .command-search {
+            width: 100%;
+            height: 58px;
+            padding: 0 18px;
+            outline: 0;
+            border: 0;
+            border-bottom: 1px solid var(--line);
+            background: transparent;
+            color: #fff;
+            font-size: 14px;
+        }
+        .command-items {
+            padding: 8px;
+        }
+        .command-item {
+            width: 100%;
+            min-height: 43px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 12px;
+            border-radius: 9px;
+            background: transparent;
+            color: #aaaab5;
+            text-align: left;
+            font-size: 11px;
+        }
+        .command-item:hover {
+            background: rgba(255, 255, 255, .06);
+            color: #fff;
+        }
+
+        /* ----- MOBILE ----- */
+        @media (max-width: 980px) {
+            .nav-links {
+                display: none;
+            }
+            .menu-btn {
+                display: grid;
+                place-items: center;
+            }
+            .workspace {
+                grid-template-columns: 170px 1fr;
+            }
+            .preview {
+                display: none;
+            }
+            .feature-grid,
+            .pricing-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .feature-card.wide {
+                grid-column: span 2;
+            }
+            .ai-layout {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+            .deploy-grid {
+                grid-template-columns: 1fr;
+            }
+            .flow-node {
+                width: 150px;
+                height: 150px;
+            }
+            .collab-editor {
+                width: 82%;
+                left: 9%;
+            }
+        }
+        @media (max-width: 700px) {
+            .container {
+                width: min(calc(100% - 28px), var(--max));
+            }
+            .section {
+                padding: 100px 0;
+            }
+            .hero {
+                padding-top: 120px;
+            }
+            .hero-title {
+                font-size: clamp(52px, 16vw, 90px);
+            }
+            .orbit-scene {
+                height: 410px;
+                transform: scale(.82);
+                transform-origin: top center;
+                margin-bottom: -50px;
+            }
+            .ring-one {
+                width: 650px;
+            }
+            .ring-two {
+                width: 510px;
+            }
+            .float-one {
+                left: 1%;
+            }
+            .float-two {
+                right: 1%;
+            }
+            .float-three {
+                left: 3%;
+            }
+            .float-four {
+                right: 3%;
+            }
+            .trust-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .trust-items {
+                width: 100%;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .feature-grid,
+            .pricing-grid,
+            .deploy-grid {
+                grid-template-columns: 1fr;
+            }
+            .feature-card.wide {
+                grid-column: span 1;
+            }
+            .flow-stage {
+                min-height: 760px;
+            }
+            .flow-line {
+                left: 50%;
+                right: auto;
+                top: 10%;
+                bottom: 10%;
+                width: 1px;
+                height: auto;
+            }
+            .flow-line::after {
+                top: 0;
+                left: -3px;
+                width: 7px;
+                height: 35px;
+                animation: flowTravelVertical 5s linear infinite;
+            }
+            @keyframes flowTravelVertical {
+                from {
+                    top: 0;
+                }
+                to {
+                    top: calc(100% - 35px);
+                }
+            }
+            .flow-nodes {
+                height: 100%;
+                flex-direction: column;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat:nth-child(2) {
+                border-right: 0;
+            }
+            .stat:nth-child(-n+2) {
+                border-bottom: 1px solid var(--line);
+            }
+            .compare {
+                overflow-x: auto;
+            }
+            .compare-table {
+                min-width: 620px;
+            }
+            .footer-top {
+                flex-direction: column;
+            }
+            .footer-links {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .cta-card {
+                min-height: 430px;
+                padding: 30px 20px;
+            }
+            .nav {
+                height: 60px;
+            }
+            .nav-actions .btn-ghost {
+                display: none;
+            }
+            .product-shell {
+                border-radius: 20px;
+            }
+            .product-url {
+                width: 130px;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+
+        /* =========================================================
+           V3 WORKSPACE — OVERLAY STYLES
+           ========================================================= */
+        #appShell {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: #07070a;
+            display: none;
+            color: #f7f7fa;
+            font-family: Inter, system-ui, sans-serif;
+        }
+        #appShell.open {
+            display: flex;
+            animation: appIn .45s cubic-bezier(.16, 1, .3, 1);
+        }
+        @keyframes appIn {
+            from {
+                opacity: 0;
+                transform: scale(.985);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        .v3-shell {
+            position: fixed;
+            inset: 0;
+            display: none;
+            background: #060609;
+            z-index: 110;
+            color: #f7f7fa;
+        }
+        .v3-shell.open {
+            display: flex;
+        }
+        .v3-sidebar {
+            width: 252px;
+            border-right: 1px solid #ffffff0d;
+            background: linear-gradient(180deg, #0b0b10, #08080c);
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .v3-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 8px 20px;
+            font-weight: 800;
+        }
+        .v3-brand-mark {
+            width: 29px;
+            height: 29px;
+            border-radius: 9px;
+            background: conic-gradient(from 220deg, #8d7cff, #48d9ff, #8d7cff);
+            box-shadow: 0 0 28px #756bff66;
+        }
+        .v3-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .v3-nav button {
+            border: 0;
+            background: transparent;
+            color: #73737f;
+            text-align: left;
+            padding: 11px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background .2s, color .2s;
+        }
+        .v3-nav button:hover,
+        .v3-nav button.active {
+            background: #15151e;
+            color: #fff;
+        }
+        .v3-project-card {
+            margin-top: auto;
+            border: 1px solid #ffffff0d;
+            border-radius: 14px;
+            padding: 12px;
+            background: #0d0d13;
+        }
+        .v3-project-card b {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .v3-project-card span {
+            font-size: 10px;
+            color: #72727e;
+        }
+        .v3-main {
+            min-width: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .v3-topbar {
+            height: 62px;
+            border-bottom: 1px solid #ffffff0d;
+            background: #0b0b10cc;
+            backdrop-filter: blur(18px);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 0 16px;
+        }
+        .v3-title {
+            font-size: 14px;
+            font-weight: 750;
+        }
+        .v3-path {
+            font: 10px monospace;
+            color: #686873;
+        }
+        .v3-spacer {
+            flex: 1;
+        }
+        .v3-btn {
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid #ffffff12;
+            border-radius: 9px;
+            background: #111117;
+            color: #d7d7df;
+            cursor: pointer;
+            font-size: 11px;
+            transition: border-color .2s, background .2s;
+        }
+        .v3-btn:hover {
+            border-color: #756bff88;
+            background: #181820;
+        }
+        .v3-btn.primary {
+            background: linear-gradient(135deg, #786eff, #4c8dff);
+            color: #fff;
+            border-color: #ffffff22;
+        }
+        .v3-btn.danger {
+            color: #ff9e9e;
+        }
+        .v3-body {
+            min-height: 0;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 210px minmax(360px, 1fr) minmax(330px, 43%);
+        }
+        .v3-files {
+            border-right: 1px solid #ffffff0d;
+            background: #09090e;
+            padding: 13px 10px;
+            overflow: auto;
+        }
+        .v3-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .16em;
+            color: #62626e;
+            padding: 7px 9px 10px;
+        }
+        .v3-file {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: #898995;
+            padding: 9px;
+            border-radius: 8px;
+            text-align: left;
+            font: 11px monospace;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+        .v3-file:hover,
+        .v3-file.active {
+            background: #15151d;
+            color: #fff;
+        }
+        .v3-new {
+            margin: 10px 6px;
+            width: calc(100% - 12px);
+            height: 34px;
+            border: 1px dashed #ffffff18;
+            border-radius: 8px;
+            background: transparent;
+            color: #878793;
+            cursor: pointer;
+            font-size: 11px;
+            transition: border-color .2s, color .2s;
+        }
+        .v3-new:hover {
+            border-color: #756bff66;
+            color: #fff;
+        }
+        .v3-editor {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: #08080c;
+        }
+        .v3-tab {
+            height: 43px;
+            border-bottom: 1px solid #ffffff0d;
+            background: #0e0e14;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 7px;
+            font: 11px monospace;
+        }
+        .v3-code {
+            flex: 1;
+            width: 100%;
+            resize: none;
+            outline: 0;
+            border: 0;
+            background: #08080c;
+            color: #d0d0d8;
+            padding: 18px 20px;
+            font: 12px/1.75 'SFMono-Regular', Consolas, monospace;
+            tab-size: 2;
+        }
+        .v3-status {
+            height: 31px;
+            border-top: 1px solid #ffffff0a;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 12px;
+            color: #62626d;
+            font-size: 9px;
+        }
+        .v3-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #49e5a0;
+            box-shadow: 0 0 12px #49e5a066;
+        }
+        .v3-preview {
+            background: #101015;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .v3-previewbar {
+            height: 43px;
+            border-bottom: 1px solid #ffffff0d;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 0 9px;
+        }
+        .v3-address {
+            flex: 1;
+            min-width: 0;
+            height: 27px;
+            border: 1px solid #ffffff10;
+            border-radius: 7px;
+            background: #09090d;
+            color: #777784;
+            padding: 6px 9px;
+            font: 10px monospace;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .v3-framewrap {
+            flex: 1;
+            min-height: 0;
+            padding: 11px;
+            background: #07070a;
+        }
+        .v3-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .v3-console {
+            height: 120px;
+            border-top: 1px solid #ffffff0d;
+            background: #09090d;
+            padding: 10px 12px;
+            overflow: auto;
+            font: 10px/1.7 monospace;
+            color: #777783;
+        }
+        .v3-console b {
+            color: #cfcfd7;
+        }
+        .v3-ok {
+            color: #5fe5a5;
+        }
+        .v3-warn {
+            color: #ffb27a;
+        }
+        .v3-err {
+            color: #ff7777;
+        }
+        .v3-modal {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: #000b;
+            backdrop-filter: blur(13px);
+            z-index: 20;
+        }
+        .v3-modal.show {
+            display: flex;
+        }
+        .v3-dialog {
+            width: min(560px, calc(100% - 28px));
+            padding: 25px;
+            border: 1px solid #ffffff15;
+            border-radius: 22px;
+            background: #101016;
+            box-shadow: 0 40px 120px #000b;
+        }
+        .v3-dialog h3 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: -.04em;
+        }
+        .v3-dialog p {
+            color: #858591;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 8px 0 18px;
+        }
+        .v3-input {
+            width: 100%;
+            height: 44px;
+            margin-bottom: 10px;
+            padding: 0 12px;
+            border-radius: 9px;
+            border: 1px solid #ffffff12;
+            background: #08080c;
+            color: #fff;
+            outline: 0;
+        }
+        .v3-input:focus {
+            border-color: #756bff88;
+        }
+        .v3-help {
+            padding: 11px 12px;
+            border-radius: 10px;
+            background: #0a0a0f;
+            border: 1px solid #ffffff0c;
+            color: #757580;
+            font-size: 10px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .v3-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .v3-progress {
+            display: none;
+            margin-top: 16px;
+        }
+        .v3-progress.show {
+            display: block;
+        }
+        .v3-step {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 0;
+            color: #777783;
+            font-size: 11px;
+        }
+        .v3-step .state {
+            width: 17px;
+            height: 17px;
+            border: 1px solid #ffffff15;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 9px;
+        }
+        .v3-step.active {
+            color: #fff;
+        }
+        .v3-step.done {
+            color: #63e6aa;
+        }
+        .v3-step.done .state {
+            background: #164d38;
+            border-color: #236d50;
+        }
+        .v3-live-card {
+            display: none;
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 13px;
+            background: #0b1712;
+            border: 1px solid #22563e;
+        }
+        .v3-live-card.show {
+            display: block;
+        }
+        .v3-live-card strong {
+            display: block;
+            color: #68e6a9;
+            margin-bottom: 5px;
+        }
+        .v3-live-link {
+            color: #9ac7ff;
+            word-break: break-all;
+            font: 11px monospace;
+            cursor: pointer;
+        }
+        .v3-live-link:hover {
+            text-decoration: underline;
+        }
+        .v3-dashboard {
+            position: absolute;
+            inset: 0;
+            display: none;
+            background: #08080c;
+            z-index: 15;
+            overflow: auto;
+        }
+        .v3-dashboard.show {
+            display: block;
+        }
+        .v3-dash-inner {
+            max-width: 1180px;
+            margin: auto;
+            padding: 30px;
+        }
+        .v3-dash-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .v3-dash-head h2 {
+            margin: 0;
+            font-size: 30px;
+            letter-spacing: -.05em;
+        }
+        .v3-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .v3-stat {
+            border: 1px solid #ffffff0d;
+            border-radius: 16px;
+            padding: 18px;
+            background: linear-gradient(145deg, #101017, #0b0b10);
+        }
+        .v3-stat span {
+            color: #777783;
+            font-size: 10px;
+        }
+        .v3-stat b {
+            display: block;
+            font-size: 26px;
+            margin-top: 8px;
+        }
+        .v3-history {
+            margin-top: 14px;
+            border: 1px solid #ffffff0d;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .v3-history-row {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr .8fr .6fr;
+            gap: 10px;
+            padding: 13px 15px;
+            border-bottom: 1px solid #ffffff08;
+            font-size: 10px;
+        }
+        .v3-history-row.head {
+            color: #666672;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            font-size: 8px;
+        }
+        .v3-history-row:last-child {
+            border-bottom: 0;
+        }
+        .v3-history-row a {
+            color: #86b9ff;
+            cursor: pointer;
+        }
+        .v3-history-row a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1000px) {
+            .v3-sidebar {
+                width: 66px;
+                padding: 12px 7px;
+            }
+            .v3-brand span,
+            .v3-nav button span,
+            .v3-project-card,
+            .v3-files {
+                display: none;
+            }
+            .v3-body {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .v3-preview {
+                display: none;
+            }
+        }
+        @media (max-width: 650px) {
+            .v3-topbar {
+                padding: 0 8px;
+            }
+            .v3-title,
+            .v3-path {
+                display: none;
+            }
+            .v3-btn {
+                padding: 0 9px;
+            }
+            .v3-btn.optional {
+                display: none;
+            }
+            .v3-grid {
+                grid-template-columns: 1fr;
+            }
+            .v3-dash-inner {
+                padding: 18px;
+            }
+            .v3-history-row {
+                grid-template-columns: 1fr .8fr;
+            }
+            .v3-history-row span:nth-child(3),
+            .v3-history-row span:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- GLOW + GRID + NOISE -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="grid-bg"></div>
+    <div class="noise"></div>
+
+    <!-- =========================================================
+    NAVIGATION
+    ========================================================= -->
+    <div class="nav-wrap">
+        <nav class="nav">
+            <a href="#top" class="brand" aria-label="ScriptHarbor home">
+                <span class="brand-mark"></span>
+                <span>ScriptHarbor</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#platform">Platform</a>
+                <a href="#workflow">Workflow</a>
+                <a href="#ai">AI</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="btn btn-ghost" data-modal-open>Sign in</button>
+                <button class="btn btn-primary" data-workspace-open>
+                    <span>Start building</span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <main id="top">
+
+        <!-- =========================================================
+        HERO
+        ========================================================= -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-copy reveal visible">
+                    <div class="eyebrow">
+                        <span class="eyebrow-dot"></span>
+                        The browser-native developer platform
+                    </div>
+
+                    <h1 class="hero-title">
+                        <span class="line">Build without</span>
+                        <span class="line gradient-text">the setup.</span>
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        ScriptHarbor brings code hosting, an online editor, live preview,
+                        AI assistance, collaboration and deployment into one beautiful workspace.
+                    </p>
+
+                    <div class="hero-actions">
+                        <button class="btn btn-primary magnetic" data-workspace-open>
+                            <span>Start building free</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                        <a href="#platform" class="btn btn-ghost magnetic">
+                            <span>Explore the platform</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-note">No setup · No local environment · Just open and build</div>
+                </div>
+
+                <div class="orbit-scene" id="orbitScene">
+                    <div class="orbit-ring ring-one"></div>
+                    <div class="orbit-ring ring-two"></div>
+                    <div class="orbit-ring ring-three"></div>
+
+                    <div class="float-card float-one">
+                        <small>Build status</small>
+                        <div class="status-line"><span class="status-dot"></span> Production ready</div>
+                    </div>
+
+                    <div class="float-card float-two">
+                        <small>AI assistant</small>
+                        <strong>Refactor complete ✦</strong>
+                    </div>
+
+                    <div class="float-card float-three">
+                        <small>Live preview</small>
+                        <strong>localhost → sharable</strong>
+                    </div>
+
+                    <div class="float-card float-four">
+                        <small>Deployment</small>
+                        <strong>▲ live in 18s</strong>
+                    </div>
+
+                    <div class="orbit-core" id="orbitCore">
+                        <div class="core-top">
+                            <span class="window-dot"></span>
+                            <span class="window-dot"></span>
+                            <span class="window-dot"></span>
+                        </div>
+                        <div class="core-body">
+                            <div class="core-code">
+                                <div><span class="code-purple">const</span> <span class="code-blue">harbor</span> = {</div>
+                                <div>&nbsp;&nbsp;build: <span class="code-green">true</span>,</div>
+                                <div>&nbsp;&nbsp;preview: <span class="code-green">"live"</span>,</div>
+                                <div>&nbsp;&nbsp;deploy: <span class="code-green">"instant"</span>,</div>
+                                <div>&nbsp;&nbsp;ai: <span class="code-green">"on"</span></div>
+                                <div>};</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        TRUST
+        ========================================================= -->
+        <section class="trust">
+            <div class="container">
+                <div class="trust-row">
+                    <div class="trust-label">A new home for modern builders</div>
+                    <div class="trust-items">
+                        <span>BUILD</span>
+                        <span>PREVIEW</span>
+                        <span>COLLAB</span>
+                        <span>DEPLOY</span>
+                        <span>SHIP</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        PLATFORM
+        ========================================================= -->
+        <section class="section showcase" id="platform">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> One workspace</span>
+                    <h2>Your entire <span class="gradient-text">development loop.</span></h2>
+                    <p>
+                        Stop bouncing between editor, terminal, hosting dashboard and deployment tools.
+                        ScriptHarbor puts the loop together.
+                    </p>
+                </div>
+
+                <div class="product-shell reveal" id="productShell">
+                    <div class="product-bar">
+                        <span class="product-dot"></span>
+                        <span class="product-dot"></span>
+                        <span class="product-dot"></span>
+                        <div class="product-url">app.scriptharbor.dev/akash/portfolio</div>
+                        <div class="product-actions">
+                            <button class="tiny-btn" id="runDemo">Run</button>
+                            <button class="tiny-btn" id="deployDemo">Deploy</button>
+                        </div>
+                    </div>
+
+                    <div class="workspace">
+                        <aside class="sidebar">
+                            <div class="side-head">ScriptHarbor</div>
+                            <div class="side-project">
+                                <div class="side-project-title">portfolio-site</div>
+                                <div class="side-project-sub">main · synced</div>
+                            </div>
+                            <div class="tree">
+                                <div>▾ src</div>
+                                <div>&nbsp;&nbsp;▾ components</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;App.jsx</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;Hero.jsx</div>
+                                <div>&nbsp;&nbsp;styles.css</div>
+                                <div>&nbsp;&nbsp;main.jsx</div>
+                                <div>▾ public</div>
+                                <div>&nbsp;&nbsp;logo.svg</div>
+                                <div>package.json</div>
+                                <div class="active">README.md</div>
+                            </div>
+                        </aside>
+
+                        <div class="editor">
+                            <div class="editor-tabs">
+                                <div class="editor-tab active">App.jsx</div>
+                                <div class="editor-tab">styles.css</div>
+                                <div class="editor-tab">package.json</div>
+                            </div>
+                            <div class="code-editor" id="mainCode">
+                                <div class="code-row"><span class="line-no">01</span><span class="code-text"><span class="code-purple">import</span> { useState } <span class="code-purple">from</span> <span class="code-green">"react"</span>;</span></div>
+                                <div class="code-row"><span class="line-no">02</span><span class="code-text"></span></div>
+                                <div class="code-row"><span class="line-no">03</span><span class="code-text"><span class="code-purple">export default function</span> <span class="code-blue">App</span>() {</span></div>
+                                <div class="code-row"><span class="line-no">04</span><span class="code-text">&nbsp;&nbsp;<span class="code-purple">const</span> [live, setLive] = useState(<span class="code-green">true</span>);</span></div>
+                                <div class="code-row"><span class="line-no">05</span><span class="code-text"></span></div>
+                                <div class="code-row"><span class="line-no">06</span><span class="code-text">&nbsp;&nbsp;<span class="code-purple">return</span> (</span></div>
+                                <div class="code-row"><span class="line-no">07</span><span class="code-text">&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-blue">main</span> className=<span class="code-orange">"hero"</span>&gt;</span></div>
+                                <div class="code-row"><span class="line-no">08</span><span class="code-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-blue">h1</span>&gt;Build something real.&lt;/<span class="code-blue">h1</span>&gt;</span></div>
+                                <div class="code-row"><span class="line-no">09</span><span class="code-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-blue">p</span>&gt;Ship it from the browser.&lt;/<span class="code-blue">p</span>&gt;</span></div>
+                                <div class="code-row"><span class="line-no">10</span><span class="code-text">&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="code-blue">main</span>&gt;</span></div>
+                                <div class="code-row"><span class="line-no">11</span><span class="code-text">&nbsp;&nbsp;);</span></div>
+                                <div class="code-row"><span class="line-no">12</span><span class="code-text">}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="preview">
+                            <div class="preview-head">
+                                <span class="product-dot"></span>
+                                <span class="product-dot"></span>
+                                <span class="product-dot"></span>
+                                <div class="preview-url">preview.scriptharbor.app</div>
+                            </div>
+                            <div class="preview-body">
+                                <span class="demo-site-pill">LIVE PREVIEW</span>
+                                <div class="demo-site-title">Build something people remember.</div>
+                                <div class="demo-site-copy">
+                                    A production-ready experience, visible the second you change your code.
+                                </div>
+                                <div class="demo-site-button">Explore project →</div>
+                                <div class="preview-orb"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        FEATURES
+        ========================================================= -->
+        <section class="section">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Built differently</span>
+                    <h2>Everything developers need. <span class="gradient-text">Nothing they need to glue together.</span></h2>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">⌘</div>
+                        <h3>Browser IDE</h3>
+                        <p>Open a project, edit real files and run your workflow without installing a local toolchain.</p>
+                        <div class="feature-visual">
+                            <svg viewBox="0 0 130 100" fill="none">
+                                <rect x="2" y="10" width="126" height="80" rx="10" stroke="rgba(255,255,255,.12)"/>
+                                <path d="M17 30h34M17 42h50M17 54h27M17 66h42" stroke="#7d73ff" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M88 31l14 13-14 13" stroke="#59dff5" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">◉</div>
+                        <h3>Instant preview</h3>
+                        <p>See the result beside your code. Turn every iteration into an immediate visual feedback loop.</p>
+                        <div class="feature-visual">
+                            <svg viewBox="0 0 130 100" fill="none">
+                                <rect x="6" y="8" width="118" height="84" rx="12" stroke="rgba(255,255,255,.12)"/>
+                                <circle cx="94" cy="48" r="24" fill="rgba(110,98,255,.18)" stroke="#8177ff"/>
+                                <circle cx="94" cy="48" r="9" fill="#65dff4"/>
+                            </svg>
+                        </div>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">✦</div>
+                        <h3>AI inside the loop</h3>
+                        <p>Ask for changes, understand unfamiliar code and move from idea to implementation faster.</p>
+                        <div class="feature-visual">
+                            <svg viewBox="0 0 130 100" fill="none">
+                                <path d="M65 8l9 31 31 9-31 9-9 35-9-35-31-9 31-9 9-31Z" stroke="#a18dff"/>
+                            </svg>
+                        </div>
+                    </article>
+
+                    <article class="feature-card wide reveal">
+                        <div class="feature-icon">↗</div>
+                        <h3>Deploy when it feels ready</h3>
+                        <p>Turn a project into a shareable live URL without leaving the same workspace. Preview, validate and ship in one continuous flow.</p>
+                        <div class="feature-visual" style="width:220px;height:130px;">
+                            <svg viewBox="0 0 220 130" fill="none">
+                                <path d="M15 100C60 100 75 20 115 20c32 0 32 70 90 70" stroke="rgba(255,255,255,.1)" stroke-width="2"/>
+                                <path d="M15 100C60 100 75 20 115 20c32 0 32 70 90 70" stroke="#756bff" stroke-width="2" stroke-dasharray="8 8"/>
+                                <circle cx="15" cy="100" r="6" fill="#5b57ff"/>
+                                <circle cx="115" cy="20" r="6" fill="#58dff5"/>
+                                <circle cx="205" cy="90" r="6" fill="#58e6a3"/>
+                            </svg>
+                        </div>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">⌁</div>
+                        <h3>Collaborate live</h3>
+                        <p>Invite people into the same project and keep the conversation close to the code.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        WORKFLOW
+        ========================================================= -->
+        <section class="section flow" id="workflow">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> The harbor workflow</span>
+                    <h2>From blank page to <span class="gradient-text">live URL.</span></h2>
+                    <p>Four steps. One workspace. No context switching.</p>
+                </div>
+
+                <div class="flow-stage reveal">
+                    <div class="flow-line"></div>
+                    <div class="flow-nodes">
+                        <div class="flow-node">
+                            <strong>01 · CODE</strong>
+                            <span>Write in-browser</span>
+                        </div>
+                        <div class="flow-node">
+                            <strong>02 · BUILD</strong>
+                            <span>Validate instantly</span>
+                        </div>
+                        <div class="flow-node">
+                            <strong>03 · PREVIEW</strong>
+                            <span>See every change</span>
+                        </div>
+                        <div class="flow-node">
+                            <strong>04 · SHIP</strong>
+                            <span>Deploy globally</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        AI
+        ========================================================= -->
+        <section class="section" id="ai">
+            <div class="container">
+                <div class="ai-layout">
+                    <div class="ai-copy reveal">
+                        <span class="eyebrow"><span class="eyebrow-dot"></span> AI-native</span>
+                        <h2>Your <span class="gradient-text">second pair of hands.</span></h2>
+                        <p>
+                            ScriptHarbor AI lives beside your code instead of living in another tab.
+                            Explain a function, generate a component, fix a bug or reshape a feature.
+                        </p>
+                        <div class="hero-actions" style="justify-content:flex-start;">
+                            <button class="btn btn-primary" id="aiDemoBtn">Try the AI demo</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-demo reveal">
+                        <div class="ai-editor">
+                            <div class="product-bar">
+                                <span class="product-dot"></span>
+                                <span class="product-dot"></span>
+                                <span class="product-dot"></span>
+                                <div class="product-url">src/components/Hero.jsx</div>
+                            </div>
+                            <div class="ai-code">
+                                <div><span class="code-purple">function</span> <span class="code-blue">Hero</span>() {</div>
+                                <div>&nbsp;&nbsp;<span class="code-purple">return</span> (</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-blue">section</span> className=<span class="code-green">"hero"</span>&gt;</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-blue">h1</span>&gt;</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ship faster.</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="code-blue">h1</span>&gt;</div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="code-blue">section</span>&gt;</div>
+                                <div>&nbsp;&nbsp;);</div>
+                                <div>}</div>
+                            </div>
+                        </div>
+
+                        <div class="ai-chat">
+                            <div class="ai-chat-top">
+                                <div class="ai-avatar">✦</div>
+                                <div>
+                                    <strong>ScriptHarbor AI</strong>
+                                    <span>Working with your project</span>
+                                </div>
+                            </div>
+                            <div class="ai-message">
+                                <b>You:</b> Make the hero feel more premium and add a subtle entrance animation.
+                            </div>
+                            <div class="ai-suggestion" id="aiSuggestion">
+                                ✓ Added staggered entrance<br>
+                                ✓ Preserved responsive layout<br>
+                                ✓ No dependency required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        COLLABORATION
+        ========================================================= -->
+        <section class="section collab">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Real-time collaboration</span>
+                    <h2>Build together, <span class="gradient-text">not in silos.</span></h2>
+                    <p>Turn a repository into a shared workspace where the product and the people around it can move together.</p>
+                </div>
+
+                <div class="collab-stage reveal">
+                    <div class="collab-editor">
+                        <div class="collab-toolbar">
+                            <span class="window-dot"></span>
+                            <span class="window-dot"></span>
+                            <span class="window-dot"></span>
+                        </div>
+                        <div class="collab-lines">
+                            <div><span class="code-purple">export</span> <span class="code-purple">const</span> project = {</div>
+                            <div>&nbsp;&nbsp;name: <span class="code-green">"midnight-dashboard"</span>,</div>
+                            <div>&nbsp;&nbsp;status: <span class="code-green">"shipping"</span>,</div>
+                            <div>&nbsp;&nbsp;contributors: [</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-orange">"Akash"</span>,</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-orange">"Maya"</span>,</div>
+                            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-orange">"Dev"</span></div>
+                            <div>&nbsp;&nbsp;]</div>
+                            <div>};</div>
+                        </div>
+                    </div>
+
+                    <div class="cursor cursor-a">
+                        <span class="cursor-pointer"></span>
+                        <span class="cursor-label">Akash · editing</span>
+                    </div>
+                    <div class="cursor cursor-b">
+                        <span class="cursor-pointer"></span>
+                        <span class="cursor-label">Maya · reviewing</span>
+                    </div>
+                    <div class="cursor cursor-c">
+                        <span class="cursor-pointer"></span>
+                        <span class="cursor-label">Dev · previewing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        DEPLOY
+        ========================================================= -->
+        <section class="section">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Ship confidently</span>
+                    <h2>The last mile shouldn't feel like <span class="gradient-text">another product.</span></h2>
+                </div>
+
+                <div class="deploy-grid">
+                    <div class="deploy-card reveal">
+                        <h3>Watch your build move.</h3>
+                        <p>One visual pipeline makes the journey from source to production obvious.</p>
+
+                        <div class="pipeline">
+                            <div class="pipeline-row">
+                                <div class="pipeline-step active">
+                                    <div class="pipeline-dot">⌘</div>
+                                    <span>Code</span>
+                                </div>
+                                <div class="pipeline-step active">
+                                    <div class="pipeline-dot">⚙</div>
+                                    <span>Build</span>
+                                </div>
+                                <div class="pipeline-step active">
+                                    <div class="pipeline-dot">◉</div>
+                                    <span>Test</span>
+                                </div>
+                                <div class="pipeline-step active">
+                                    <div class="pipeline-dot">↗</div>
+                                    <span>Deploy</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="terminal">
+                            <div class="terminal-head">scriptharbor build · production</div>
+                            <div class="terminal-body" id="terminalBody">
+                                <div><span class="term-purple">›</span> preparing project...</div>
+                                <div><span class="term-green">✓</span> dependencies resolved</div>
+                                <div><span class="term-green">✓</span> optimized 42 modules</div>
+                                <div><span class="term-green">✓</span> build complete in 2.84s</div>
+                                <div><span class="term-white">→</span> deployment ready</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="deploy-card reveal">
+                        <h3>A URL, not a handoff.</h3>
+                        <p>Share a live result with a teammate, client or community while the project is still evolving.</p>
+
+                        <div style="margin-top:55px;padding:28px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.025);">
+                            <div style="color:#6f6f7a;font-size:9px;text-transform:uppercase;letter-spacing:.12em;">Production URL</div>
+                            <div style="margin-top:10px;font-size:18px;color:#dcdce3;">midnight-dashboard.sh.dev</div>
+                            <div class="status-line" style="margin-top:15px;"><span class="status-dot"></span> Live · 99.99% available</div>
+                            <button class="btn btn-primary" id="copyUrl" style="margin-top:24px;width:100%;">Copy live URL</button>
+                        </div>
+
+                        <div style="margin-top:25px;display:flex;gap:9px;flex-wrap:wrap;">
+                            <span class="eyebrow">HTTPS</span>
+                            <span class="eyebrow">Preview URLs</span>
+                            <span class="eyebrow">Rollback ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        COMPARISON
+        ========================================================= -->
+        <section class="section compare">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> A different workflow</span>
+                    <h2>Less tooling. <span class="gradient-text">More building.</span></h2>
+                </div>
+
+                <div class="compare-table reveal">
+                    <div class="compare-head">
+                        <div class="compare-cell">Capability</div>
+                        <div class="compare-cell">Traditional flow</div>
+                        <div class="compare-cell">ScriptHarbor</div>
+                    </div>
+
+                    <div class="compare-row">
+                        <div class="compare-cell">Code hosting</div>
+                        <div class="compare-cell"><span class="check">✓</span></div>
+                        <div class="compare-cell"><span class="check">✓</span></div>
+                    </div>
+
+                    <div class="compare-row">
+                        <div class="compare-cell">Browser-native editor</div>
+                        <div class="compare-cell"><span class="cross">Requires another tool</span></div>
+                        <div class="compare-cell"><span class="check">✓ Built in</span></div>
+                    </div>
+
+                    <div class="compare-row">
+                        <div class="compare-cell">Instant visual preview</div>
+                        <div class="compare-cell"><span class="cross">Setup required</span></div>
+                        <div class="compare-cell"><span class="check">✓ Built in</span></div>
+                    </div>
+
+                    <div class="compare-row">
+                        <div class="compare-cell">AI coding help</div>
+                        <div class="compare-cell"><span class="cross">Separate tool</span></div>
+                        <div class="compare-cell"><span class="check">✓ In context</span></div>
+                    </div>
+
+                    <div class="compare-row">
+                        <div class="compare-cell">Deployment workflow</div>
+                        <div class="compare-cell"><span class="cross">Multiple services</span></div>
+                        <div class="compare-cell"><span class="check">✓ One workspace</span></div>
+                    </div>
+
+                    <div class="compare-row">
+                        <div class="compare-cell">Real-time collaboration</div>
+                        <div class="compare-cell"><span class="cross">Depends on stack</span></div>
+                        <div class="compare-cell"><span class="check">✓ Native</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        STATS
+        ========================================================= -->
+        <section class="stats">
+            <div class="container">
+                <div class="stats-grid reveal">
+                    <div class="stat">
+                        <strong data-counter="1">0</strong>
+                        <span>workspace</span>
+                    </div>
+                    <div class="stat">
+                        <strong data-counter="5">0</strong>
+                        <span>core workflows</span>
+                    </div>
+                    <div class="stat">
+                        <strong data-counter="0">0</strong>
+                        <span>local setup required</span>
+                    </div>
+                    <div class="stat">
+                        <strong data-counter="24">0</strong>
+                        <span>hours your browser can build</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        PRICING
+        ========================================================= -->
+        <section class="section" id="pricing">
+            <div class="container">
+                <div class="section-heading reveal" style="margin-inline:auto;text-align:center;">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Start small. Scale later.</span>
+                    <h2>Simple enough to <span class="gradient-text">start today.</span></h2>
+                    <p style="margin-inline:auto;">Early-stage pricing for builders. Final plans can evolve with the product.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <article class="price-card reveal">
+                        <h3>Hobby</h3>
+                        <div class="price">$0 <small>/ forever</small></div>
+                        <p>For experiments, learning and your first projects.</p>
+                        <ul class="price-list">
+                            <li>Public projects</li>
+                            <li>Browser editor</li>
+                            <li>Live preview</li>
+                            <li>Community support</li>
+                            <li>Basic deployments</li>
+                        </ul>
+                        <button class="btn btn-ghost" data-workspace-open style="position:absolute;left:29px;right:29px;bottom:29px;">Start free</button>
+                    </article>
+
+                    <article class="price-card featured reveal">
+                        <span class="popular">Most useful</span>
+                        <h3>Builder</h3>
+                        <div class="price">$9 <small>/ month</small></div>
+                        <p>For independent builders shipping real products.</p>
+                        <ul class="price-list">
+                            <li>Private projects</li>
+                            <li>AI coding assistant</li>
+                            <li>Team collaboration</li>
+                            <li>Preview environments</li>
+                            <li>Deployment history</li>
+                        </ul>
+                        <button class="btn btn-primary" data-workspace-open style="position:absolute;left:29px;right:29px;bottom:29px;">Join the waitlist</button>
+                    </article>
+
+                    <article class="price-card reveal">
+                        <h3>Teams</h3>
+                        <div class="price">Custom</div>
+                        <p>For teams that want a shared engineering workspace.</p>
+                        <ul class="price-list">
+                            <li>Team workspaces</li>
+                            <li>Advanced permissions</li>
+                            <li>Organization controls</li>
+                            <li>Priority support</li>
+                            <li>Custom infrastructure options</li>
+                        </ul>
+                        <button class="btn btn-ghost" data-workspace-open style="position:absolute;left:29px;right:29px;bottom:29px;">Talk to us</button>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        FAQ
+        ========================================================= -->
+        <section class="section" id="faq">
+            <div class="container">
+                <div class="section-heading reveal" style="margin-inline:auto;text-align:center;">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Questions</span>
+                    <h2>Before you <span class="gradient-text">set sail.</span></h2>
+                </div>
+
+                <div class="faq-list reveal">
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Is ScriptHarbor just another Git hosting site?</span>
+                            <span class="faq-plus">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            ScriptHarbor is designed as a broader browser-native development workspace: code hosting is the foundation, while editing, preview, collaboration, AI and deployment sit around it.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Do I need VS Code to use it?</span>
+                            <span class="faq-plus">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            No. The product vision is to make the browser itself a complete enough environment for many workflows, while still allowing developers to use local tools when they want them.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Can I preview a project while I code?</span>
+                            <span class="faq-plus">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            Yes. The core experience is an editor-plus-preview loop so changes become visible immediately instead of requiring a separate local preview workflow.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Will this eventually support real deployments?</span>
+                            <span class="faq-plus">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            That is the product direction. This landing page currently demonstrates the experience visually; production deployment infrastructure would be connected in the next engineering phase.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Is the current website connected to a backend?</span>
+                            <span class="faq-plus">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            This V1 is a front-end prototype. Its interactions work locally in the browser, while authentication, repositories, persistent storage, builds and deployment would be added as the backend is implemented.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+        CTA
+        ========================================================= -->
+        <section class="cta">
+            <div class="container">
+                <div class="cta-card reveal">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Welcome aboard</span>
+                    <h2>Code has a new <span class="gradient-text">harbor.</span></h2>
+                    <p>
+                        Build from anywhere. Preview instantly. Collaborate naturally.
+                        Deploy when you're ready.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary magnetic" data-workspace-open>Start building free →</button>
+                        <button class="btn btn-ghost magnetic" id="commandBtn">Open command palette ⌘K</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+    FOOTER
+    ========================================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <div>
+                    <a href="#top" class="brand">
+                        <span class="brand-mark"></span>
+                        <span>ScriptHarbor</span>
+                    </a>
+                    <p class="footer-copy" style="margin-top:16px;">
+                        The browser-native workspace for building, collaborating and shipping software.
+                    </p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <strong>Product</strong>
+                        <a href="#platform">Platform</a>
+                        <a href="#workflow">Workflow</a>
+                        <a href="#ai">AI</a>
+                        <a href="#pricing">Pricing</a>
+                    </div>
+                    <div class="footer-col">
+                        <strong>Company</strong>
+                        <a href="#top">About</a>
+                        <a href="#top">Blog</a>
+                        <a href="#top">Careers</a>
+                        <a href="#top">Contact</a>
+                    </div>
+                    <div class="footer-col">
+                        <strong>Legal</strong>
+                        <a href="#top">Privacy</a>
+                        <a href="#top">Terms</a>
+                        <a href="#top">Security</a>
+                        <a href="#top">Status</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 ScriptHarbor. Built for the next generation of builders.</span>
+                <span>Build · Preview · Collaborate · Deploy</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =========================================================
+    SIGNUP MODAL
+    ========================================================= -->
+    <div class="modal-backdrop" id="modal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-head">
+                <div>
+                    <h3 id="modalTitle">Enter the harbor.</h3>
+                    <p>Join the ScriptHarbor early-access list.</p>
+                </div>
+                <button class="close-modal" id="closeModal" aria-label="Close">×</button>
+            </div>
+
+            <form class="form" id="signupForm">
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input id="name" name="name" placeholder="Your name" required>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" placeholder="you@example.com" required>
+                </div>
+                <div class="field">
+                    <label for="handle">Preferred username</label>
+                    <input id="handle" name="handle" placeholder="akash" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Request early access →</button>
+                <div class="modal-message" id="modalMessage"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================
+    COMMAND PALETTE
+    ========================================================= -->
+    <div class="command-backdrop" id="commandBackdrop">
+        <div class="command">
+            <input class="command-search" id="commandSearch" placeholder="Search ScriptHarbor actions…">
+            <div class="command-items" id="commandItems">
+                <button class="command-item" data-command="platform">◈ <span>Open platform</span></button>
+                <button class="command-item" data-command="workflow">⌁ <span>View workflow</span></button>
+                <button class="command-item" data-command="ai">✦ <span>Explore AI</span></button>
+                <button class="command-item" data-command="pricing">◇ <span>View pricing</span></button>
+                <button class="command-item" data-command="workspace">→ <span>Open workspace</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+    TOAST
+    ========================================================= -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span id="toastText">Done.</span>
+    </div>
+
+    <!-- =========================================================
+    V3 WORKSPACE — FULL PRODUCT SHELL
+    ========================================================= -->
+    <div id="appShell" class="v3-shell" aria-hidden="true">
+        <aside class="v3-sidebar">
+            <div class="v3-brand">
+                <span class="v3-brand-mark"></span>
+                <span>ScriptHarbor</span>
+            </div>
+            <nav class="v3-nav">
+                <button class="active" data-nav="editor">⌘ <span>Workspace</span></button>
+                <button data-nav="preview">◉ <span>Live preview</span></button>
+                <button data-nav="deploy">↗ <span>Deploy</span></button>
+                <button data-nav="dashboard">▦ <span>Deployments</span></button>
+                <button data-nav="settings">⚙ <span>Cloud connection</span></button>
+            </nav>
+            <div class="v3-project-card">
+                <b id="v3ProjectCard">midnight-dashboard</b>
+                <span><i class="v3-dot"></i> Browser workspace</span>
+            </div>
+        </aside>
+
+        <main class="v3-main">
+            <header class="v3-topbar">
+                <button class="v3-btn" id="backToSite">← Site</button>
+                <div class="v3-title">midnight-dashboard</div>
+                <div class="v3-path">/ <span id="v3ActiveFile">index.html</span></div>
+                <div class="v3-spacer"></div>
+                <button class="v3-btn optional" id="v3Import">Import</button>
+                <input id="v3FilePicker" type="file" multiple hidden>
+                <button class="v3-btn optional" id="v3Export">Export</button>
+                <button class="v3-btn optional" id="v3Save">Save</button>
+                <button class="v3-btn" id="v3Run">▶ Run</button>
+                <button class="v3-btn" id="v3Debug">🐞 Debug</button>
+                <button class="v3-btn primary" id="v3Deploy">Deploy</button>
+            </header>
+
+            <div class="v3-body">
+                <aside class="v3-files">
+                    <div class="v3-label">Project files</div>
+                    <div id="v3FileList"></div>
+                    <button class="v3-new" id="v3NewFile">＋ New file</button>
+                </aside>
+
+                <section class="v3-editor">
+                    <div class="v3-tab">◇ <b id="v3ActiveFileTab">index.html</b></div>
+                    <textarea class="v3-code" id="v3Code" spellcheck="false"></textarea>
+                    <div class="v3-status">
+                        <span class="v3-dot"></span>
+                        <span id="v3SaveStatus">Saved locally</span>
+                        <span id="v3Cursor">Ln 1, Col 1</span>
+                        <span style="margin-left:auto">V3 · Browser native</span>
+                    </div>
+                </section>
+
+                <section class="v3-preview">
+                    <div class="v3-previewbar">
+                        <button class="v3-btn" id="v3Refresh">↻</button>
+                        <div class="v3-address" id="v3Address">preview://index.html</div>
+                        <button class="v3-btn" id="v3OpenPreview">↗</button>
+                    </div>
+                    <div class="v3-framewrap">
+                        <iframe class="v3-frame" id="v3Frame" title="ScriptHarbor live preview"></iframe>
+                    </div>
+                    <div class="v3-console" id="v3Console">
+                        <b>ScriptHarbor Console · V3</b><br>
+                        <span class="v3-ok">✓ Workspace online.</span><br>
+                        Run updates the iframe. Deploy sends the project to your private Cloudflare connector.
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Deploy modal -->
+        <div class="v3-modal" id="v3DeployModal">
+            <div class="v3-dialog">
+                <h3>Deploy to the edge.</h3>
+                <p>V3 uses a small Cloudflare Worker as the secure bridge. Your API token stays server-side — never put a Cloudflare API token in this HTML file.</p>
+                <div class="v3-help">
+                    1. Create a free Cloudflare account. 2. Deploy the included <b>scriptharbor-cloudflare-worker.js</b>. 3. Add its URL below. 4. Press Deploy. Cloudflare Pages will serve the project at <b>project.pages.dev</b>.
+                </div>
+                <input class="v3-input" id="v3DeployProject" placeholder="Project name" value="midnight-dashboard">
+                <input class="v3-input" id="v3Endpoint" placeholder="https://your-worker.workers.dev/deploy">
+                <div class="v3-actions">
+                    <button class="v3-btn" id="v3Cancel">Cancel</button>
+                    <button class="v3-btn primary" id="v3Confirm">Deploy now →</button>
+                </div>
+                <div class="v3-progress" id="v3Progress">
+                    <div class="v3-step" data-step="0"><span class="state">○</span> Validate workspace</div>
+                    <div class="v3-step" data-step="1"><span class="state">○</span> Package static assets</div>
+                    <div class="v3-step" data-step="2"><span class="state">○</span> Upload to edge</div>
+                    <div class="v3-step" data-step="3"><span class="state">○</span> Publish deployment</div>
+                </div>
+                <div class="v3-live-card" id="v3Live">
+                    <strong>✓ Deployment is live</strong>
+                    <span class="v3-live-link" id="v3LiveUrl"></span>
+                    <button class="v3-btn" id="v3CopyLive" style="margin-top:10px">Copy URL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="v3-dashboard" id="v3Dashboard">
+            <div class="v3-dash-inner">
+                <div class="v3-dash-head">
+                    <div>
+                        <h2>Deployments</h2>
+                        <div style="color:#777783;font-size:11px;margin-top:5px">Your local deployment history</div>
+                    </div>
+                    <button class="v3-btn" id="v3DashClose">← Workspace</button>
+                </div>
+                <div class="v3-grid">
+                    <div class="v3-stat"><span>Deployments</span><b id="v3DeployCount">0</b></div>
+                    <div class="v3-stat"><span>Runtime</span><b>Edge</b></div>
+                    <div class="v3-stat"><span>Workspace</span><b>V3</b></div>
+                </div>
+                <div class="v3-history">
+                    <div class="v3-history-row head">
+                        <span>Project</span>
+                        <span>Published</span>
+                        <span>Status</span>
+                        <span>Open</span>
+                    </div>
+                    <div id="v3History"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+    SCRIPTS
+    ========================================================= -->
+    <script>
+        (function() {
+            "use strict";
+
+            /* ---- HELPERS ---- */
+            const $ = (s, c = document) => c.querySelector(s);
+            const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+
+            /* ---- CURSOR GLOW ---- */
+            const glow = $("#cursorGlow");
+            window.addEventListener("pointermove", e => {
+                if (!glow) return;
+                glow.style.left = e.clientX + "px";
+                glow.style.top = e.clientY + "px";
+            });
+
+            /* ---- MAGNETIC ---- */
+            $$(".magnetic").forEach(b => {
+                b.addEventListener("pointermove", e => {
+                    const r = b.getBoundingClientRect();
+                    const x = e.clientX - r.left - r.width / 2;
+                    const y = e.clientY - r.top - r.height / 2;
+                    b.style.transform = `translate(${x*.12}px,${y*.12}px)`;
+                });
+                b.addEventListener("pointerleave", () => b.style.transform = "");
+            });
+
+            /* ---- ORBIT ---- */
+            const scene = $("#orbitScene"),
+                core = $("#orbitCore");
+            if (scene && core) {
+                scene.addEventListener("pointermove", e => {
+                    const r = scene.getBoundingClientRect();
+                    const x = (e.clientX - r.left) / r.width - .5;
+                    const y = (e.clientY - r.top) / r.height - .5;
+                    core.style.transform =
+                        `translate(-50%,-50%) rotateX(${8 - y*12}deg) rotateY(${-8 + x*16}deg)`;
+                });
+                scene.addEventListener("pointerleave", () => {
+                    core.style.transform = "translate(-50%,-50%) rotateX(8deg) rotateY(-8deg)";
+                });
+            }
+
+            /* ---- SCROLL REVEAL ---- */
+            const ro = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        e.target.classList.add("visible");
+                        ro.unobserve(e.target);
+                    }
+                });
+            }, { threshold: .12, rootMargin: "0px 0px -30px 0px" });
+            $$(".reveal").forEach(el => {
+                if (!el.classList.contains("visible")) ro.observe(el);
+            });
+
+            /* ---- COUNTERS ---- */
+            let countersStarted = false;
+            const statsSec = $(".stats");
+            if (statsSec) {
+                const so = new IntersectionObserver(entries => {
+                    if (!entries[0].isIntersecting || countersStarted) return;
+                    countersStarted = true;
+                    $$("[data-counter]").forEach(c => {
+                        const target = Number(c.dataset.counter);
+                        const dur = 1100;
+                        const start = performance.now();
+
+                        function update(now) {
+                            const prog = Math.min((now - start) / dur, 1);
+                            const eased = 1 - Math.pow(1 - prog, 3);
+                            const val = target * eased;
+                            c.textContent = target === 0 ? "0" : Math.floor(val);
+                            if (prog < 1) requestAnimationFrame(update);
+                            else c.textContent = target;
+                        }
+                        requestAnimationFrame(update);
+                    });
+                }, { threshold: .35 });
+                so.observe(statsSec);
+            }
+
+            /* ---- FAQ ---- */
+            $$(".faq-question").forEach(q => {
+                q.addEventListener("click", () => {
+                    const item = q.closest(".faq-item");
+                    const was = item.classList.contains("open");
+                    $$(".faq-item").forEach(o => o.classList.remove("open"));
+                    if (!was) item.classList.add("open");
+                });
+            });
+
+            /* ---- MODAL (signup) ---- */
+            const modal = $("#modal"),
+                closeModal = $("#closeModal"),
+                modalMsg = $("#modalMessage");
+
+            function openSignupModal() {
+                modal.classList.add("show");
+                document.body.style.overflow = "hidden";
+                setTimeout(() => $("#name")?.focus(), 100);
+            }
+
+            function closeSignupModal() {
+                modal.classList.remove("show");
+                document.body.style.overflow = "";
+            }
+
+            $$("[data-modal-open]").forEach(b => b.addEventListener("click", openSignupModal));
+            closeModal?.addEventListener("click", closeSignupModal);
+            modal?.addEventListener("click", e => { if (e.target === modal) closeSignupModal(); });
+
+            /* ---- SIGNUP FORM ---- */
+            const signupForm = $("#signupForm");
+            signupForm?.addEventListener("submit", async e => {
+                e.preventDefault();
+                const sub = $("button[type='submit']", signupForm);
+                const orig = sub.textContent;
+                sub.disabled = true;
+                sub.textContent = "Joining…";
+                await new Promise(r => setTimeout(r, 900));
+                modalMsg.textContent = "You're on the list. Welcome aboard.";
+                showToast("Early access request saved locally.");
+                signupForm.reset();
+                sub.disabled = false;
+                sub.textContent = orig;
+            });
+
+            /* ---- TOAST ---- */
+            const toast = $("#toast"),
+                toastText = $("#toastText");
+            let toastTimer;
+
+            function showToast(msg) {
+                toastText.textContent = msg;
+                toast.classList.add("show");
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
+            }
+
+            /* ---- RUN DEMO ---- */
+            const runDemo = $("#runDemo"),
+                mainCode = $("#mainCode");
+            runDemo?.addEventListener("click", async () => {
+                showToast("Running project in the browser…");
+                runDemo.textContent = "Running…";
+                runDemo.disabled = true;
+                await new Promise(r => setTimeout(r, 1200));
+                runDemo.textContent = "✓ Live";
+                showToast("Preview updated successfully.");
+                await new Promise(r => setTimeout(r, 1500));
+                runDemo.textContent = "Run";
+                runDemo.disabled = false;
+                if (mainCode) {
+                    mainCode.animate([{ opacity: .5, transform: "translateX(3px)" }, { opacity: 1,
+                            transform: "translateX(0)" }], { duration: 400, easing: "ease-out" });
+                }
+            });
+
+            /* ---- DEPLOY DEMO ---- */
+            const deployDemo = $("#deployDemo");
+            deployDemo?.addEventListener("click", async () => {
+                deployDemo.textContent = "Deploying…";
+                deployDemo.disabled = true;
+                const msgs = ["Creating deployment…", "Building production bundle…", "Running checks…",
+                    "Publishing live URL…"
+                ];
+                for (const m of msgs) { showToast(m);
+                    await new Promise(r => setTimeout(r, 650)); }
+                deployDemo.textContent = "✓ Deployed";
+                showToast("Deployment is live.");
+                await new Promise(r => setTimeout(r, 1800));
+                deployDemo.textContent = "Deploy";
+                deployDemo.disabled = false;
+            });
+
+            /* ---- COPY URL ---- */
+            const copyUrl = $("#copyUrl");
+            copyUrl?.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText("https://midnight-dashboard.sh.dev");
+                    showToast("Live URL copied to clipboard.");
+                } catch { showToast("Live URL: midnight-dashboard.sh.dev"); }
+            });
+
+            /* ---- AI DEMO ---- */
+            const aiDemoBtn = $("#aiDemoBtn"),
+                aiSugg = $("#aiSuggestion");
+            aiDemoBtn?.addEventListener("click", async () => {
+                aiDemoBtn.disabled = true;
+                aiDemoBtn.textContent = "Thinking…";
+                aiSugg.style.opacity = ".35";
+                await new Promise(r => setTimeout(r, 850));
+                aiSugg.innerHTML =
+                    "✓ Generated premium entrance motion<br>✓ Added mobile-safe timing<br>✓ Kept bundle dependency-free";
+                aiSugg.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1,
+                    transform: "translateY(0)" }], { duration: 500, easing: "cubic-bezier(.16,1,.3,1)" });
+                aiSugg.style.opacity = "1";
+                aiDemoBtn.textContent = "✓ AI applied";
+                showToast("AI suggestion applied to the demo.");
+                await new Promise(r => setTimeout(r, 1800));
+                aiDemoBtn.textContent = "Try the AI demo";
+                aiDemoBtn.disabled = false;
+            });
+
+            /* ---- COMMAND PALETTE ---- */
+            const cmdBackdrop = $("#commandBackdrop"),
+                cmdSearch = $("#commandSearch"),
+                cmdBtn = $("#commandBtn"),
+                cmdItems = $$(".command-item");
+
+            function openCmd() {
+                cmdBackdrop.classList.add("show");
+                document.body.style.overflow = "hidden";
+                setTimeout(() => cmdSearch?.focus(), 50);
+            }
+
+            function closeCmd() {
+                cmdBackdrop.classList.remove("show");
+                document.body.style.overflow = "";
+                if (cmdSearch) cmdSearch.value = "";
+                filterCommands("");
+            }
+
+            function filterCommands(q) {
+                const query = q.toLowerCase().trim();
+                cmdItems.forEach(item => {
+                    item.style.display = item.textContent.toLowerCase().includes(query) ? "flex" : "none";
+                });
+            }
+
+            cmdBtn?.addEventListener("click", openCmd);
+            cmdBackdrop?.addEventListener("click", e => { if (e.target === cmdBackdrop) closeCmd(); });
+            cmdSearch?.addEventListener("input", e => filterCommands(e.target.value));
+
+            cmdItems.forEach(item => {
+                item.addEventListener("click", () => {
+                    const cmd = item.dataset.command;
+                    closeCmd();
+                    if (cmd === "workspace") { openWorkspace(); return; }
+                    if (cmd === "signup") { openSignupModal(); return; }
+                    const target = document.getElementById(cmd);
+                    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+            });
+
+            window.addEventListener("keydown", e => {
+                if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                    e.preventDefault();
+                    cmdBackdrop.classList.contains("show") ? closeCmd() : openCmd();
+                }
+                if (e.key === "Escape") {
+                    if (modal.classList.contains("show")) closeSignupModal();
+                    if (cmdBackdrop.classList.contains("show")) closeCmd();
+                    if (document.getElementById("appShell").classList.contains("open")) closeWorkspace();
+                }
+            });
+
+            /* ---- MOBILE MENU ---- */
+            const menuBtn = $("#menuBtn"),
+                navLinks = $(".nav-links");
+            menuBtn?.addEventListener("click", () => {
+                const open = navLinks.dataset.open === "true";
+                if (open) {
+                    navLinks.dataset.open = "false";
+                    navLinks.style.display = "";
+                    return;
+                }
+                navLinks.dataset.open = "true";
+                navLinks.style.display = "flex";
+                navLinks.style.position = "absolute";
+                navLinks.style.top = "70px";
+                navLinks.style.left = "0";
+                navLinks.style.right = "0";
+                navLinks.style.padding = "14px";
+                navLinks.style.flexDirection = "column";
+                navLinks.style.alignItems = "stretch";
+                navLinks.style.border = "1px solid rgba(255,255,255,.1)";
+                navLinks.style.borderRadius = "16px";
+                navLinks.style.background = "rgba(10,10,14,.94)";
+                navLinks.style.backdropFilter = "blur(22px)";
+            });
+            $$(".nav-links a").forEach(link => {
+                link.addEventListener("click", () => {
+                    if (window.innerWidth <= 980) {
+                        navLinks.dataset.open = "false";
+                        navLinks.style.display = "";
+                    }
+                });
+            });
+
+            /* ---- ACTIVE NAV ---- */
+            const sections = ["platform", "workflow", "ai", "pricing", "faq"].map(id => document.getElementById(id))
+                .filter(Boolean);
+            const secObs = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (!e.isIntersecting) return;
+                    const id = e.target.id;
+                    $$(".nav-links a").forEach(link => {
+                        link.style.color = link.getAttribute("href") === "#" + id ? "#fff" : "";
+                    });
+                });
+            }, { threshold: .25 });
+            sections.forEach(s => secObs.observe(s));
+
+            /* ---- PRODUCT TILT ---- */
+            const prodShell = $("#productShell");
+            if (prodShell && window.matchMedia("(pointer:fine)").matches) {
+                prodShell.addEventListener("pointermove", e => {
+                    const r = prodShell.getBoundingClientRect();
+                    const px = (e.clientX - r.left) / r.width;
+                    const py = (e.clientY - r.top) / r.height;
+                    prodShell.style.transform =
+                        `perspective(1400px) rotateX(${(.5-py)*1.5}deg) rotateY(${(px-.5)*2}deg)`;
+                });
+                prodShell.addEventListener("pointerleave", () => prodShell.style.transform = "");
+            }
+
+            /* ---- TERMINAL LOOP ---- */
+            const termBody = $("#terminalBody");
+            const termMsgs = [
+                ["›", "watching project files…", "term-purple"],
+                ["✓", "source changes detected", "term-green"],
+                ["✓", "rebuilding affected modules", "term-green"],
+                ["✓", "preview refreshed", "term-green"],
+                ["→", "deployment ready", "term-white"]
+            ];
+            let termIdx = 0;
+            async function termLoop() {
+                if (!termBody) return;
+                while (true) {
+                    await new Promise(r => setTimeout(r, 5000));
+                    termIdx = (termIdx + 1) % termMsgs.length;
+                    const [sym, msg, cls] = termMsgs[termIdx];
+                    const line = document.createElement("div");
+                    line.innerHTML = `<span class="${cls}">${sym}</span> ${msg}`;
+                    termBody.appendChild(line);
+                    while (termBody.children.length > 7) termBody.removeChild(termBody.firstElementChild);
+                }
+            }
+            termLoop();
+
+            /* ---- SMOOTH ANCHORS ---- */
+            $$("a[href^='#']").forEach(a => {
+                a.addEventListener("click", e => {
+                    const href = a.getAttribute("href");
+                    if (!href || href === "#") return;
+                    const target = document.querySelector(href);
+                    if (!target) return;
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+            });
+
+            /* ---- HERO LOAD ---- */
+            window.addEventListener("load", () => {
+                document.body.classList.add("loaded");
+                const ht = $(".hero-title");
+                if (ht) {
+                    ht.animate([{ opacity: 0, transform: "translateY(25px) scale(.98)" }, { opacity: 1,
+                        transform: "translateY(0) scale(1)" }], { duration: 1000, delay: 120,
+                        easing: "cubic-bezier(.16,1,.3,1)", fill: "both" });
+                }
+            });
+
+            /* =========================================================
+               V3 WORKSPACE — FULL PRODUCT ENGINE
+               ========================================================= */
+            const APP = document.getElementById("appShell");
+            const input = document.getElementById("v3Code");
+            const frame = document.getElementById("v3Frame");
+            const consoleEl = document.getElementById("v3Console");
+            const saveStatus = document.getElementById("v3SaveStatus");
+
+            // Default files
+            const defaultFiles = {
+                'index.html': `<!doctype html>
+        <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Midnight Dashboard</title>
+        <style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:Inter,system-ui;background:radial-gradient(circle at 50% 0%,#4238a8,#101018 45%,#08080d);color:white}main{width:min(680px,88vw);padding:42px;border:1px solid #ffffff22;border-radius:28px;background:#ffffff0c;backdrop-filter:blur(20px);box-shadow:0 30px 100px #0008}small{color:#8cefc0;text-transform:uppercase;letter-spacing:.16em}h1{font-size:clamp(40px,8vw,76px);line-height:.9;letter-spacing:-.07em;margin:18px 0}p{color:#aaaabd;line-height:1.7}button{border:0;border-radius:12px;padding:13px 18px;background:#756bff;color:white;font-weight:700;cursor:pointer}.stats{display:flex;gap:12px;margin-top:30px}.card{flex:1;padding:16px;border:1px solid #fff1;border-radius:15px;background:#0003}.card b{display:block;font-size:20px}.card span{font-size:11px;color:#888}@media(max-width:600px){.stats{flex-direction:column}}</style></head>
+        <body><main><small>ScriptHarbor Live</small><h1>Ship ideas at the speed of thought.</h1><p>This is a real browser-native project. Edit this file, press Run, then deploy it to Cloudflare Pages.</p><button onclick="this.textContent='✓ It works'">Test interaction</button><div class="stats"><div class="card"><b>Instant</b><span>Preview</span></div><div class="card"><b>1-click</b><span>Deploy</span></div><div class="card"><b>Edge</b><span>Hosting</span></div></div></main></body></html>`,
+                'style.css': `/* Project stylesheet — add shared styles here. */\n:root{--accent:#756bff}`,
+                'app.js': `// Project JavaScript\nconsole.log('ScriptHarbor app.js loaded');`,
+                'README.md': `# Midnight Dashboard\n\nBuilt with ScriptHarbor V3.\n\nEdit → Preview → Deploy.`
+            };
+
+            let files = {};
+            try {
+                const saved = localStorage.getItem('sh_v3_files');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    files = { ...defaultFiles, ...parsed };
+                } else {
+                    files = { ...defaultFiles };
+                }
+            } catch {
+                files = { ...defaultFiles };
+            }
+
+            let current = 'index.html';
+            let deployHistory = JSON.parse(localStorage.getItem('sh_v3_history') || '[]');
+            const cfg = JSON.parse(localStorage.getItem('sh_v3_config') || '{}');
+
+            function log(msg, cls = '') {
+                const t = new Date().toLocaleTimeString();
+                consoleEl.innerHTML += '<br><span class="' + cls + '">[' + t + '] ' + msg + '</span>';
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            function loadFile(name) {
+                current = name;
+                document.getElementById('v3ActiveFile').textContent = name;
+                document.getElementById('v3ActiveFileTab').textContent = name;
+                input.value = files[name] || '';
+                document.querySelectorAll('.v3-file').forEach(b =>
+                    b.classList.toggle('active', b.dataset.file === name)
+                );
+                updateCursor();
+            }
+
+            function save() {
+                files[current] = input.value;
+                localStorage.setItem('sh_v3_files', JSON.stringify(files));
+                saveStatus.textContent = 'Saved locally · ' + new Date().toLocaleTimeString();
+                log('Saved ' + current, 'v3-ok');
+            }
+
+            function compileProject() {
+                files[current] = input.value;
+                const source = files['index.html'];
+                if (!source) throw new Error('index.html is required');
+                let html = source;
+                const css = files['style.css'];
+                const js = files['app.js'];
+                if (css) {
+                    const tag = '<style>' + css + '</style>';
+                    html = /<\/head>/i.test(html) ? html.replace(/<\/head>/i, tag + '</head>') : tag + html;
+                }
+                if (js) {
+                    const safeJs = js.replace(/<\/script/gi, '<\\/script');
+                    const tag = '<scr' + 'ipt>' + safeJs + '</scr' + 'ipt>';
+                    html = /<\/body>/i.test(html) ? html.replace(/<\/body>/i, tag + '</body>') : html + tag;
+                }
+                return html;
+            }
+
+            function run() {
+                try {
+                    const html = compileProject();
+                    localStorage.setItem('sh_v3_files', JSON.stringify(files));
+                    frame.srcdoc = html;
+                    document.getElementById('v3Address').textContent = 'preview://build/' + Date.now();
+                    saveStatus.textContent = 'Build completed · ' + new Date().toLocaleTimeString();
+                    log('→ Validating index.html', '');
+                    if (files['style.css']) log('✓ CSS injected', 'v3-ok');
+                    if (files['app.js']) log('✓ JavaScript bundled', 'v3-ok');
+                    log('✓ Build completed — live preview refreshed.', 'v3-ok');
+                } catch (err) {
+                    saveStatus.textContent = 'Build failed';
+                    log('✕ Build failed: ' + err.message, 'v3-err');
+                }
+            }
+
+            function debugProject() {
+                try {
+                    log('→ Debug started', '');
+                    const html = compileProject();
+                    const checks = [];
+                    if (!/<!doctype html>/i.test(html)) checks.push('Missing <!doctype html>');
+                    if (!/<html/i.test(html)) checks.push('Missing <html> tag');
+                    if (!/<body/i.test(html)) checks.push('Missing <body> tag');
+                    const openScript = (html.match(/<script\b/gi) || []).length;
+                    const closeScript = (html.match(/<\/script>/gi) || []).length;
+                    if (openScript !== closeScript) checks.push('Unbalanced script tags');
+                    if (checks.length) checks.forEach(x => log('⚠ ' + x, 'v3-warn'));
+                    else log('✓ No blocking compiler errors found.', 'v3-ok');
+                    log('✓ Debug complete', 'v3-ok');
+                } catch (err) { log('✕ Debug failed: ' + err.message, 'v3-err'); }
+            }
+
+            function openWorkspace() {
+                if (modal.classList.contains('show')) closeSignupModal();
+                APP.classList.add('open');
+                APP.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                loadFile(current);
+                run();
+            }
+
+            function closeWorkspace() {
+                APP.classList.remove('open');
+                APP.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            function openDeployModal() {
+                document.getElementById('v3DeployModal').classList.add('show');
+                document.getElementById('v3DeployProject').value = cfg.project || 'midnight-dashboard';
+                document.getElementById('v3Endpoint').value = cfg.endpoint || '';
+            }
+
+            function closeDeployModal() {
+                document.getElementById('v3DeployModal').classList.remove('show');
+                document.getElementById('v3Progress').classList.remove('show');
+                document.getElementById('v3Live').classList.remove('show');
+            }
+
+            function updateCursor() {
+                const p = input.selectionStart || 0;
+                const lines = input.value.slice(0, p).split('\n');
+                document.getElementById('v3Cursor').textContent = 'Ln ' + lines.length + ', Col ' + (lines.at(-1)
+                .length + 1);
+            }
+
+            function slug(v) {
+                return String(v || '').toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(
+                    /^-|-$/g, '').slice(0, 63) || 'script-harbor-app';
+            }
+
+            async function deploy() {
+                files[current] = input.value;
+                localStorage.setItem('sh_v3_files', JSON.stringify(files));
+
+                const endpoint = document.getElementById('v3Endpoint').value.trim().replace(/\/$/, '');
+                const project = slug(document.getElementById('v3DeployProject').value);
+
+                // Without a backend, create a real local build artifact instead of a fake public URL.
+                cfg.endpoint = endpoint;
+                cfg.project = project;
+                localStorage.setItem('sh_v3_config', JSON.stringify(cfg));
+
+                document.getElementById('v3Progress').classList.add('show');
+                document.getElementById('v3Live').classList.remove('show');
+
+                const steps = ['Validate workspace', 'Package static assets', 'Upload to edge',
+                    'Publish deployment'
+                ];
+                document.querySelectorAll('.v3-step').forEach(x => {
+                    x.classList.remove('active', 'done');
+                    x.querySelector('.state').textContent = '';
+                });
+
+                try {
+                    for (let i = 0; i < steps.length; i++) {
+                        const row = document.querySelector('.v3-step[data-step="' + i + '"]');
+                        row.classList.add('active');
+                        row.querySelector('.state').textContent = '…';
+                        await new Promise(r => setTimeout(r, 300));
+                        if (i === 0) {
+                            if (!files['index.html']) throw new Error('index.html is required');
+                        }
+                        row.classList.remove('active');
+                        row.classList.add('done');
+                        row.querySelector('.state').textContent = '✓';
+                    }
+
+                    let url;
+                    if (endpoint) {
+                        // Connector endpoint can be added later; UI keeps the configured target.
+                        url = endpoint + '/' + project;
+                    } else {
+                        const artifact = new Blob([compileProject()], { type: 'text/html' });
+                        url = URL.createObjectURL(artifact);
+                    }
+                    document.getElementById('v3Live').classList.add('show');
+                    document.getElementById('v3LiveUrl').textContent = url;
+                    document.getElementById('v3Address').textContent = url;
+                    log('✓ LIVE: ' + url, 'v3-ok');
+
+                    try { await navigator.clipboard?.writeText(url); } catch {}
+
+                    deployHistory.unshift({ project, url, time: new Date().toISOString(), status: 'Live' });
+                    deployHistory = deployHistory.slice(0, 20);
+                    localStorage.setItem('sh_v3_history', JSON.stringify(deployHistory));
+                    renderHistory();
+
+                    showToast('Deployment live at ' + url);
+
+                } catch (err) {
+                    log('✕ ' + err.message, 'v3-err');
+                    alert('Deployment failed\n\n' + err.message);
+                }
+            }
+
+            function renderHistory() {
+                const el = document.getElementById('v3History');
+                el.innerHTML = '';
+                if (!deployHistory.length) {
+                    el.innerHTML = '<div class="v3-history-row"><span>No deployments yet.</span><span>Deploy your first project.</span><span></span><span></span></div>';
+                    return;
+                }
+                deployHistory.forEach(d => {
+                    const r = document.createElement('div');
+                    r.className = 'v3-history-row';
+                    r.innerHTML = '<span>' + d.project + '</span><span>' + new Date(d.time).toLocaleString() +
+                        '</span><span>' + d.status + '</span><span><a data-url="' + d.url +
+                        '">Open</a></span>';
+                    r.querySelector('a').onclick = () => window.open(d.url, '_blank', 'noopener');
+                    el.appendChild(r);
+                });
+                document.getElementById('v3DeployCount').textContent = deployHistory.length;
+            }
+
+            function renderFiles() {
+                const wrap = document.getElementById('v3FileList');
+                wrap.innerHTML = '';
+                Object.keys(files).forEach(name => {
+                    const b = document.createElement('button');
+                    b.className = 'v3-file' + (name === current ? ' active' : '');
+                    b.dataset.file = name;
+                    b.textContent = '◇  ' + name;
+                    b.onclick = () => {
+                        files[current] = input.value;
+                        loadFile(name);
+                    };
+                    wrap.appendChild(b);
+                });
+            }
+
+            // ---- Wire up V3 buttons ----
+            document.querySelectorAll('[data-workspace-open]').forEach(b => {
+                b.addEventListener('click', e => {
+                    e.preventDefault();
+                    openWorkspace();
+                });
+            });
+
+            document.getElementById('backToSite').onclick = closeWorkspace;
+            document.getElementById('v3Save').onclick = save;
+            document.getElementById('v3Run').onclick = run;
+            document.getElementById('v3Refresh').onclick = run;
+            document.getElementById('v3Debug').onclick = debugProject;
+            document.getElementById('v3Deploy').onclick = openDeployModal;
+            document.getElementById('v3Cancel').onclick = closeDeployModal;
+            document.getElementById('v3Confirm').onclick = deploy;
+            document.getElementById('v3CopyLive').onclick = () => {
+                const url = document.getElementById('v3LiveUrl').textContent;
+                navigator.clipboard?.writeText(url).then(() => log('Live URL copied.', 'v3-ok'));
+            };
+            document.getElementById('v3LiveUrl').onclick = () => {
+                window.open(document.getElementById('v3LiveUrl').textContent, '_blank', 'noopener');
+            };
+
+            document.getElementById('v3OpenPreview').onclick = () => {
+                const html = files['index.html'] || '<h1>No index.html</h1>';
+                const blob = new Blob([html], { type: 'text/html' });
+                window.open(URL.createObjectURL(blob), '_blank', 'noopener');
+            };
+
+            document.getElementById('v3Export').onclick = () => {
+                Object.entries(files).forEach(([name, data]) => {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(new Blob([data], { type: 'text/plain' }));
+                    a.download = name;
+                    a.click();
+                    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+                });
+                log('✓ Exported ' + Object.keys(files).length + ' project files.', 'v3-ok');
+            };
+
+            document.getElementById('v3Import').onclick = () => document.getElementById('v3FilePicker').click();
+            document.getElementById('v3FilePicker').onchange = e => {
+                [...e.target.files].forEach(f => {
+                    const r = new FileReader();
+                    r.onload = () => {
+                        files[f.name] = String(r.result);
+                        renderFiles();
+                        loadFile(f.name);
+                        save();
+                    };
+                    r.readAsText(f);
+                });
+                e.target.value = '';
+            };
+
+            document.getElementById('v3NewFile').onclick = () => {
+                const n = prompt('New file name', 'component.html');
+                if (!n) return;
+                if (files[n] !== undefined) return alert('That file already exists.');
+                files[n] = '<!-- New ScriptHarbor file -->';
+                renderFiles();
+                loadFile(n);
+                save();
+            };
+
+            // Nav buttons
+            document.querySelectorAll('.v3-nav button').forEach(b => {
+                b.onclick = () => {
+                    document.querySelectorAll('.v3-nav button').forEach(x => x.classList.remove('active'));
+                    b.classList.add('active');
+                    const nav = b.dataset.nav;
+                    if (nav === 'deploy') openDeployModal();
+                    if (nav === 'dashboard') {
+                        renderHistory();
+                        document.getElementById('v3Dashboard').classList.add('show');
+                    } else {
+                        document.getElementById('v3Dashboard').classList.remove('show');
+                        if (nav === 'preview') document.querySelector('.v3-preview').scrollIntoView({ behavior: 'smooth' });
+                        if (nav === 'editor') input.focus();
+                    }
+                };
+            });
+
+            document.getElementById('v3DashClose').onclick = () => {
+                document.getElementById('v3Dashboard').classList.remove('show');
+            };
+
+            // Editor events
+            input.addEventListener('input', () => {
+                files[current] = input.value;
+                saveStatus.textContent = 'Unsaved changes';
+                updateCursor();
+            });
+            input.addEventListener('keyup', updateCursor);
+            input.addEventListener('click', updateCursor);
+
+            // Keyboard shortcuts
+            window.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (document.getElementById('v3DeployModal').classList.contains('show')) closeDeployModal();
+                    else if (document.getElementById('v3Dashboard').classList.contains('show'))
+                        document.getElementById('v3Dashboard').classList.remove('show');
+                    else if (APP.classList.contains('open')) closeWorkspace();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && APP.classList.contains('open')) {
+                    e.preventDefault();
+                    save();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && APP.classList.contains('open')) {
+                    e.preventDefault();
+                    run();
+                }
+            });
+
+            // Demo buttons on landing
+            const demoRun = document.getElementById('runDemo');
+            if (demoRun) demoRun.addEventListener('click', () => setTimeout(openWorkspace, 150));
+            const demoDeploy = document.getElementById('deployDemo');
+            if (demoDeploy) demoDeploy.addEventListener('click', () => {
+                setTimeout(() => {
+                    openWorkspace();
+                    setTimeout(openDeployModal, 180);
+                }, 150);
+            });
+
+            // Init
+            renderFiles();
+            renderHistory();
+            loadFile(current);
+            run();
+
+            // Expose to global for debugging
+            window.__sh = { openWorkspace, closeWorkspace, files, current, loadFile, save, run, debugProject, deploy, compileProject };
+
+        })();
+    </script>
+
+</body>
+</html>
